@@ -33,16 +33,16 @@ Create this key in your working directory. Terraform will read the public key co
 - Create a key pair using ssh-Keygen
 - Get its full path to inject into the terraform.tfvars file for the 'sshkeypath' variable
 
+PS
 ```
-PS>
 # Create a filename
 $sshfile = "lx-vm-ssh"
 
 # Generate an SSH Key Pair (optinoally assign a passphrase)
-ssh-keygen -t rsa -b 4096 -C "thecite-linuxlab" -f $sshfile
+ssh-keygen -t rsa -b 4096 -C "thecite-linuxlab" -f "$env:USERPROFILE\$sshfile"
 
 # Get the key path
-$key = [string](Get-Item $sshfile).FullName.Replace('\','/')
+$key = [string](Get-Item "$env:USERPROFILE\$sshfile").FullName.Replace('\','/')
 
 # Append the key path to the .tfvars file
 "sshkeypath=`"$key`"" | Out-File .\infra\terraform.tfvars -Append
