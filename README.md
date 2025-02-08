@@ -35,17 +35,35 @@ Create this key in your working directory. Terraform will read the public key co
 
 PS
 ```
-# Create a filename
-$sshfile = "lx-vm-ssh"
+#local variables
+$tfvarsFilePath = ".\terraform.tfvars"
+$variableName = "vmname"
 
-# Generate an SSH Key Pair (optinoally assign a passphrase)
-ssh-keygen -t rsa -b 4096 -C "thecite-linuxlab" -f "$env:USERPROFILE\$sshfile"
+#Get the 'vmname' variable from the .tfvars using an expression for matching key name
+(Get-Content $tfvarsFilePath -Raw) -match "$variableName\s*=\s*`"(.+?)`"" | Out-Null
+$localKey = ("$env:USERPROFILE\"+$Matches[1])
 
-# Get the key path
-$key = [string](Get-Item "$env:USERPROFILE\$sshfile").FullName.Replace('\','/')
+# Generate an SSH Key Pair using the name of the VM and store in your home folder (Optionally assign a passphrase for the key)
+ssh-keygen -t rsa -b 4096 -C "thecite-linuxlab" -f $localKey
 
-# Append the key path to the .tfvars file
-"sshkeypath=`"$key`"" | Out-File .\infra\terraform.tfvars -Append
+# Set the NTFS permissions using iCacls (Use chmod on Linux) to remove inherited permissions
+icacls $localKey /reset 
+icacls $localKey /grant:r "$($env:USERNAME):(F)"
+icacls $localKey /inheritance:r
+icacls $localKey
+
+# Append some environment settings:
+
+# 1. get subscription_id from environment vars, and append to .tfvars
+"subscription_id = `"$Env:ARM_SUBSCRIPTION_ID`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
+
+# 2. get the public key path for terraform, and append to .tfvars
+$tfPath = ([string]$localKey.Replace('\','/') + ".pub")
+"sshkeypath = `"$tfPath`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
+
+# 3. get your Client IP address and add to .tvars for NSGs/ACLs
+$labIP = ((Invoke-WebRequest -Uri "http://ifconfig.me/ip").Content.Trim() + "/32")
+"my_ip_cidr = `"$labIP`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
 ```
 
 
