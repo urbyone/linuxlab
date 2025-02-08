@@ -3,15 +3,17 @@
 ## 1. Project Overview
 The goal of this project is to improve on the basics of deploying and administering linux virtual machines in the Azure Cloud. 
 
-The lab scenario is based on the **[Guided Project from Microsoft Learn](https://learn.microsoft.com/en-gb/training/modules/guided-project-deploy-administer-linux-virtual-machines-azure/),** but expands on these concepts for real world scenarios.
+The lab scenario is based on the **[Guided Project from Microsoft Learn](https://learn.microsoft.com/en-gb/training/modules/guided-project-deploy-administer-linux-virtual-machines-azure/),** but expands on these concepts for real world scenarios such as deploying with Terraform and applying the governance requirements.
 
 ### 1.1 Project Scenario
 As in the guided project, you have been asked to create a web server for a new ecommerce website. You want to explore how to create Linux virtual machines using Azure. 
 
 You are also interested in using SSH to securely connect to the virtual machine. You will want to install the latest OS updates and the Nginx web server.
 
-**ADDITIONALLY** the service will....
-the servier should...
+**ADDITIONALLY** 
+* 
+* 
+* 
 
 ### 1.2 Project Objectives
 - Create an SSH key pair and set the required permissions
@@ -29,14 +31,14 @@ the servier should...
 ## 2. Project Steps
 ### 2.1 Create an SSH Key Pair for VM authentication
 Create this key in your working directory. Terraform will read the public key content and configure it on the Azure Virtual Machine for SSH.
-- Assign the ssh key a name for reference
+- Assign the vmName to the key and save in the user's home folder
 - Create a key pair using ssh-Keygen
-- Get its full path to inject into the terraform.tfvars file for the 'sshkeypath' variable
+- Get its full path to inject into the terraform.tfvars file for the 'sshkeypath' variable in .tfvars
 
 PS
 ```
-#local variables
-$tfvarsFilePath = ".\terraform.tfvars"
+#Set local variables
+$tfvarsFilePath = ".\terraform.tfvars" # in the /infra directory
 $variableName = "vmname"
 
 #Get the 'vmname' variable from the .tfvars using an expression for matching key name
@@ -51,9 +53,14 @@ icacls $localKey /reset
 icacls $localKey /grant:r "$($env:USERNAME):(F)"
 icacls $localKey /inheritance:r
 icacls $localKey
+```
 
+### 2.2 Assign some local variables
+Obtain the subscription ID, Client IP address from you local machine. Also manipulate the SSH key path for the public key and insert these as new variables in the .tfvars file
+
+PS
+```
 # Append some environment settings:
-
 # 1. get subscription_id from environment vars, and append to .tfvars
 "subscription_id = `"$Env:ARM_SUBSCRIPTION_ID`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
 
@@ -67,13 +74,18 @@ $labIP = ((Invoke-WebRequest -Uri "http://ifconfig.me/ip").Content.Trim() + "/32
 ```
 
 
-
 ### 2.1 Deploy the Azure VM and its depandancies
 Deploy the Virtual Machine and setup the SSH connection. A virtual network and NSG will be used to isolate inbund traffic from the internet. In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in a later lab exercise.
 
 ![VM](./images/lab01.png)
 
+**Terraform Workflow Time**
+
+run terraform plan
+run terraform apply
+
+connect to the instance
 ```
-PS
-$vm = (terraform output -raw vm_ip_address) ; ssh -i $key adminuser@$vm
+$vm = (terraform output -raw vm_ip_address)
+ssh -i $localKey adminuser@$vm
 ```
