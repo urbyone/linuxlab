@@ -1,3 +1,12 @@
+locals {
+  ssh_key_path = "~/.ssh/${var.vmname}.pub"
+}
+
+locals {
+  ssh_key = file(local.ssh_key_path)
+}
+
+
 resource "azurerm_resource_group" "rsg1" {
   location = var.region
   name     = var.rsgname
@@ -6,7 +15,7 @@ resource "azurerm_resource_group" "rsg1" {
 resource "azurerm_ssh_public_key" "sshkey1" {
   location            = azurerm_resource_group.rsg1.location
   name                = "${azurerm_linux_virtual_machine.azvm1.name}-sshkey"
-  public_key          = file(var.sshkeypath)
+  public_key          = local.ssh_key
   resource_group_name = var.rsgname
 
 }
@@ -60,7 +69,7 @@ resource "azurerm_linux_virtual_machine" "azvm1" {
   additional_capabilities {
   }
   admin_ssh_key {
-    public_key = file(var.sshkeypath)
+    public_key = local.ssh_key
     username   = "adminuser"
   }
   identity {

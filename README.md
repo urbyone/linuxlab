@@ -1,14 +1,14 @@
-# Linux IaaS Infrastructure Project Plan
+# Linux IaaS Infrastructure Project
 
 ## 1. Project Overview
-The goal of this project is to improve on the basics of deploying and administering linux virtual machines in the Azure Cloud. 
+The goal of this project is to improve on the basics of deploying and administering linux virtual machines in the Azure Cloud.
 
-The lab scenario is based on the **[Guided Project from Microsoft Learn](https://learn.microsoft.com/en-gb/training/modules/guided-project-deploy-administer-linux-virtual-machines-azure/),** but expands on these concepts for real world scenarios such as deploying with Terraform and applying the governance requirements.
+The lab scenario is based on the **[Guided Project from Microsoft Learn](https://learn.microsoft.com/en-gb/training/modules/guided-project-deploy-administer-linux-virtual-machines-azure/),** but expands on these concepts for real world scenarios such as deploying with Terraform and applying any governance requirements.
 
 ### 1.1 Project Scenario
-As in the guided project, you have been asked to create a web server for a new ecommerce website. You want to explore how to create Linux virtual machines using Azure. 
+As in the guided project, you have been asked to create a web server for a new ecommerce website. You want to explore how to create Linux virtual machines using Azure. Instead of doing the lab using the Azure Portal, this lab will focus on automating the build process.
 
-You are also interested in using SSH to securely connect to the virtual machine. You will want to install the latest OS updates and the Nginx web server.
+You are also interested in using SSH to securely connect to the virtual machine so you can install the latest OS updates and the Nginx web server.
 
 **ADDITIONALLY** 
 * 
@@ -30,62 +30,65 @@ You are also interested in using SSH to securely connect to the virtual machine.
 
 ## 2. Project Steps
 ### 2.1 Create an SSH Key Pair for VM authentication
-Create this key in your working directory. Terraform will read the public key content and configure it on the Azure Virtual Machine for SSH.
-- Assign the vmName to the key and save in the user's home folder
-- Create a key pair using ssh-Keygen
-- Get its full path to inject into the terraform.tfvars file for the 'sshkeypath' variable in .tfvars
 
-PS
-```
-#Set local variables
-$tfvarsFilePath = ".\terraform.tfvars" # in the /infra directory
-$variableName = "vmname"
+Sh
 
-#Get the 'vmname' variable from the .tfvars using an expression for matching key name
-(Get-Content $tfvarsFilePath -Raw) -match "$variableName\s*=\s*`"(.+?)`"" | Out-Null
-$localKey = ("$env:USERPROFILE\"+$Matches[1])
-
-# Generate an SSH Key Pair using the name of the VM and store in your home folder (Optionally assign a passphrase for the key)
-ssh-keygen -t rsa -b 4096 -C "thecite-linuxlab" -f $localKey
-
-# Set the NTFS permissions using iCacls (Use chmod on Linux) to remove inherited permissions
-icacls $localKey /reset 
-icacls $localKey /grant:r "$($env:USERNAME):(F)"
-icacls $localKey /inheritance:r
-icacls $localKey
 ```
 
-### 2.2 Assign some local variables
-Obtain the subscription ID, Client IP address from you local machine. Also manipulate the SSH key path for the public key and insert these as new variables in the .tfvars file
+subscription_id="e7ff6a6d-ec02-4fcc-b579-16ba0251b540"
+region="uksouth"
+rsgname="thecite-linuxlab"
+vmname="ecom-nginx-web01"
+vmSKU="Standard_DS1_v2"
+client_ip=$(curl -s http://api.ipify.org)
+my_ip_cidr="${client_ip}/32"
+tfvarsFilePath=./infra/terraform.tfvars
 
-PS
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname} -C "thecite-linuxlabs"
+chmod 600 ~/.ssh/${vmname}
+sshkeypath=
+
+{
+  echo "region = \"$region\""
+  echo "rsgname = \"$rsgname\""
+  echo "vmname = \"$vmname\""
+  echo "vmSKU = \"$vmSKU\""
+  echo "subscription_id = \"$subscription_id\""
+  echo "my_ip_cidr = \"$my_ip_cidr\""
+} > $tfvarsFilePath
+
 ```
-# Append some environment settings:
-# 1. get subscription_id from environment vars, and append to .tfvars
-"subscription_id = `"$Env:ARM_SUBSCRIPTION_ID`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
 
-# 2. get the public key path for terraform, and append to .tfvars
-$tfPath = ([string]$localKey.Replace('\','/') + ".pub")
-"sshkeypath = `"$tfPath`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
-
-# 3. get your Client IP address and add to .tvars for NSGs/ACLs
-$labIP = ((Invoke-WebRequest -Uri "http://ifconfig.me/ip").Content.Trim() + "/32")
-"my_ip_cidr = `"$labIP`"" | Out-File $tfVarsFilePath -Encoding UTF8 -Append
-```
-
-
-### 2.1 Deploy the Azure VM and its depandancies
+### 2.2 Deploy the Azure VM and its depandancies
 Deploy the Virtual Machine and setup the SSH connection. A virtual network and NSG will be used to isolate inbund traffic from the internet. In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in a later lab exercise.
-
-![VM](./images/lab01.png)
 
 **Terraform Workflow Time**
 
-run terraform plan
-run terraform apply
+```
+terraform plan
+```
 
-connect to the instance
 ```
-$vm = (terraform output -raw vm_ip_address)
-ssh -i $localKey adminuser@$vm
+terraform apply
 ```
+
+**connect to the instance to ensure everything is working**
+```
+vm=(terraform output -raw vm_ip_address)
+ssh -i ~/.ssh/${vmname} adminuser@$vm
+```
+
+**Use Ansible to deploy the nginx web server**
+
+```
+
+{
+ echo "[Web]"
+ echo 
+}
+$hosts = New-Item .\ansible\hosts -Force
+"[web]" | Out-File -FilePath $Hosts.FullName -Encoding UTF8
+"$vm ansible_user=adminuser ansible_ssh_private_key_file=/mnt/c"+($localKey.Split(':')[1]).replace('\','/') | Out-File -FilePath $Hosts.FullName -Append -Encoding UTF8
+```
+
+![VM](./images/lab01.png)

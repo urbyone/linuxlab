@@ -4,7 +4,6 @@ variable "subscription_id" {
   type        = string
 
 }
-
 variable "my_ip_cidr" {
   description = "client IP(s) for SSH on Security Group Rule in CIDR notation"
   type        = string
@@ -17,11 +16,6 @@ variable "rsgname" {
 
 variable "region" {
   description = "Resource location"
-  type        = string
-}
-
-variable "sshkeypath" {
-  description = "the local path of the public ssh key"
   type        = string
 }
 
