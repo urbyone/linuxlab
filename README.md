@@ -144,6 +144,9 @@ ansible-playbook -i hosts nginx.yml
 
 **sh**
 ```
-curl $vm
+curl $vm # Gets a response from the web server
+echo $vm # Show the IP Address to paste into your browser
 ```
+
+**You should no be able to visit the webpage of the nginx server from a web browser**
 ![VM](./images/lab01.png)
