@@ -157,3 +157,12 @@ echo $vm # Show the IP Address to paste into your browser
 
 **You should no be able to visit the webpage of the nginx server from a web browser**
 ![VM](./images/lab01.png)
+
+## Cleanup
+Once you have configured, destroy the infrastruture from the terraform root
+
+**sh**
+```
+cd ../infra/
+terraform destroy -auto-approve
+```
