@@ -29,7 +29,7 @@ You are also interested in using SSH to securely connect to the virtual machine 
 - A Linux environment, WSL2 or VSCode Workspace to run:     
   - An Azure Subscription
   - Git
-  - Terraform (configured with access to Azure Subscription)
+  - Terraform (configured with access to Azure Subscription with Environment Variables)
   - Ansible
 
 ## 2. Project Steps
@@ -59,7 +59,6 @@ tfvarsFilePath=./infra/terraform.tfvars
 ```
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname} -C "thecite-linuxlabs"
 chmod 600 ~/.ssh/${vmname}
-
 ```
 **Create the .tfvars file for terraform workflow**
 
@@ -111,13 +110,21 @@ terraform apply
 vm=$(terraform output -raw vm_ip_address)
 ssh -i ~/.ssh/${vmname} adminuser@$vm
 ```
-You will likely receive a **warning** about the host's fingerprint. Continue by typing **yes** to add the fingerprint to your known hosts file
+You will likely receive a **warning** about the host's fingerprint. Continue by typing **_yes_** to add the fingerprint to your known hosts file.
 
-Confirm you are connected as **adminuser@vmname** 
 
-**_'adminuser@ecom-nginx-web01:~$'_**
+>The authenticity of host '172.166.195.243 (172.166.195.243)' can't be established.
+ED25519 key fingerprint is SHA256:+ycbee44QbwBianvFg8zSU9F05xaQ3rqXftqwBUW75o.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? **yes**
+
+Confirm you are connected as **adminuser@_vmname_** 
+
+>**_adminuser@vmname:~$_**
 
 Then type **_'logout'_** to get back to the local terminal.
+
+>**_adminuser@vmname:~$_ logout**
 
 **Navigate to the Ansible directory to deploy the nginx web server**
 
