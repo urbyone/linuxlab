@@ -44,7 +44,7 @@ Edit the below variables to change your configuration
 
 ```
 
-subscription_id = env("ARM_SUBSCRIPTION_ID")
+subscription_id=$ARM_SUBSCRIPTION_ID
 region="uksouth"
 rsgname="thecite-linuxlab"
 vmname="ecom-nginx-web01"
