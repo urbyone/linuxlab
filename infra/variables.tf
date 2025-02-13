@@ -28,3 +28,8 @@ variable "vmSKU" {
   description = "the SKU of the virtul machine size"
   type        = string
 }
+
+variable "email" {
+  description = "email address for monitoring alerts"
+  type        = string
+}

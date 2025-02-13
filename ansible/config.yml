@@ -1,0 +1,26 @@
+---
+- hosts: web
+  become: yes
+  tasks:
+    - name: Update the apt cache
+      apt:
+        update_cache: yes
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+    - name: Copy setup script to remote server
+      ansible.builtin.copy:
+        src: myscript.sh
+        dest: /tmp/myscript.sh
+        mode: '0755'
+    - name: Run a script with arguments (free form)
+      command: /tmp/myscript.sh

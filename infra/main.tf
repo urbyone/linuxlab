@@ -94,6 +94,7 @@ resource "azurerm_linux_virtual_machine" "azvm1" {
 resource "azurerm_network_interface_security_group_association" "nsgadd1" {
   network_interface_id      = "/subscriptions/${var.subscription_id}/resourceGroups/${azurerm_resource_group.rsg1.name}/providers/Microsoft.Network/networkInterfaces/${azurerm_network_interface.nic1.name}"
   network_security_group_id = "/subscriptions/${var.subscription_id}/resourceGroups/${azurerm_resource_group.rsg1.name}/providers/Microsoft.Network/networkSecurityGroups/${azurerm_network_security_group.nsg1.name}"
+  depends_on                = [azurerm_network_interface.nic1, azurerm_network_security_group.nsg1]
 
 }
 resource "azurerm_network_security_group" "nsg1" {
@@ -114,6 +115,7 @@ resource "azurerm_network_security_rule" "nsgrule1" {
   resource_group_name         = azurerm_resource_group.rsg1.name
   source_address_prefix       = "*"
   source_port_range           = "*"
+  depends_on                  = [azurerm_network_security_group.nsg1]
 
 }
 resource "azurerm_network_security_rule" "nsgrule2" {
@@ -128,6 +130,7 @@ resource "azurerm_network_security_rule" "nsgrule2" {
   resource_group_name         = azurerm_resource_group.rsg1.name
   source_address_prefix       = "*"
   source_port_range           = "*"
+  depends_on                  = [azurerm_network_security_group.nsg1]
 }
 
 resource "azurerm_network_security_rule" "nsgrule3" {
@@ -142,9 +145,170 @@ resource "azurerm_network_security_rule" "nsgrule3" {
   resource_group_name         = azurerm_resource_group.rsg1.name
   source_address_prefix       = var.my_ip_cidr
   source_port_range           = "*"
+  depends_on                  = [azurerm_network_security_group.nsg1]
 
 }
 
+resource "azurerm_managed_disk" "data_disk" {
+  name                 = "${var.vmname}-datadisk"
+  location             = azurerm_resource_group.rsg1.location
+  resource_group_name  = azurerm_resource_group.rsg1.name
+  storage_account_type = "StandardSSD_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 64
+
+  depends_on = [
+    azurerm_resource_group.rsg1
+  ]
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {
+  managed_disk_id    = azurerm_managed_disk.data_disk.id
+  virtual_machine_id = azurerm_linux_virtual_machine.azvm1.id
+  lun                = "1"
+  caching            = "ReadWrite"
+
+  depends_on = [
+    azurerm_managed_disk.data_disk,
+    azurerm_linux_virtual_machine.azvm1
+  ]
+}
+
+resource "azurerm_log_analytics_workspace" "log" {
+  location            = azurerm_resource_group.rsg1.location
+  name                = "${var.vmname}-log"
+  resource_group_name = var.rsgname
+  depends_on = [
+    azurerm_resource_group.rsg1
+  ]
+}
+
+resource "azurerm_monitor_action_group" "amag" {
+  name                = "Cloud Operations"
+  resource_group_name = var.rsgname
+  short_name          = "CloudOps"
+  email_receiver {
+    email_address = var.email
+    name          = "Email1"
+  }
+  depends_on = [
+    azurerm_resource_group.rsg1
+  ]
+}
+resource "azurerm_monitor_activity_log_alert" "log_activity" {
+  description         = "Virtual machine was updated or deleted."
+  name                = "VM-Changes-Alert"
+  resource_group_name = var.rsgname
+  location            = "global"
+  scopes              = ["/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}"]
+  action {
+    action_group_id = "/subscriptions/${var.subscription_id}/resourcegroups/${var.rsgname}/providers/microsoft.insights/actiongroups/${azurerm_monitor_action_group.amag.name}"
+  }
+  criteria {
+    category       = "Administrative"
+    operation_name = "Microsoft.Compute/virtualMachines/write"
+  }
+
+}
+resource "azurerm_monitor_metric_alert" "alert" {
+  frequency                = "PT1H"
+  name                     = "CPUAlerts"
+  resource_group_name      = var.rsgname
+  scopes                   = ["/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}"]
+  target_resource_type     = "Microsoft.Compute/virtualMachines"
+  target_resource_location = azurerm_resource_group.rsg1.location
+  severity                 = 2
+  window_size              = "PT1H"
+  action {
+    action_group_id = "/subscriptions/${var.subscription_id}/resourcegroups/${var.rsgname}/providers/microsoft.insights/actiongroups/${azurerm_monitor_action_group.amag.name}"
+  }
+  criteria {
+    aggregation      = "Average"
+    metric_name      = "Percentage CPU"
+    metric_namespace = "Microsoft.Compute/virtualMachines"
+    operator         = "GreaterThan"
+    threshold        = 90
+  }
+  depends_on = [
+    azurerm_linux_virtual_machine.azvm1
+  ]
+}
+
+resource "azurerm_recovery_services_vault" "rsv1" {
+  name                = "${var.rsgname}-rsv"
+  location            = azurerm_resource_group.rsg1.location
+  resource_group_name = azurerm_resource_group.rsg1.name
+  sku                 = "Standard"
+  storage_mode_type   = "LocallyRedundant"
+  soft_delete_enabled = false
+}
+
+
+resource "azurerm_backup_policy_vm" "rsvpol-1" {
+  name                = "vmbackups-lab"
+  policy_type         = "V2"
+  recovery_vault_name = azurerm_recovery_services_vault.rsv1.name
+  resource_group_name = azurerm_resource_group.rsg1.name
+  backup {
+    frequency = "Daily"
+    time      = "00:00"
+  }
+  retention_daily {
+    count = 7
+  }
+  depends_on = [
+    azurerm_recovery_services_vault.rsv1,
+  ]
+}
+
+resource "azurerm_virtual_machine_extension" "ama" {
+  auto_upgrade_minor_version = true
+  name                       = "AzureMonitorLinuxAgent"
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorLinuxAgent"
+  type_handler_version       = "1.0"
+  virtual_machine_id         = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}/providers/Microsoft.Compute/virtualMachines/${var.vmname}"
+  depends_on = [
+    azurerm_linux_virtual_machine.azvm1
+  ]
+}
+
+resource "azurerm_monitor_data_collection_rule" "res-5" {
+  description         = "Data collection rule for VM Insights."
+  location            = azurerm_resource_group.rsg1.location
+  name                = "${var.rsgname}-dcr"
+  resource_group_name = var.rsgname
+  data_flow {
+    destinations = ["VMInsightsPerf-Logs-Dest"]
+    streams      = ["Microsoft-InsightsMetrics"]
+  }
+  data_flow {
+    destinations = ["VMInsightsPerf-Logs-Dest"]
+    streams      = ["Microsoft-ServiceMap"]
+  }
+  data_sources {
+    extension {
+      extension_name = "DependencyAgent"
+      name           = "DependencyAgentDataSource"
+      streams        = ["Microsoft-ServiceMap"]
+    }
+    performance_counter {
+      counter_specifiers            = ["\\VmInsights\\DetailedMetrics"]
+      name                          = "VMInsightsPerfCounters"
+      sampling_frequency_in_seconds = 60
+      streams                       = ["Microsoft-InsightsMetrics"]
+    }
+  }
+  destinations {
+    log_analytics {
+      name                  = "VMInsightsPerf-Logs-Dest"
+      workspace_resource_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}/providers/Microsoft.OperationalInsights/workspaces/${var.vmname}-log"
+    }
+  }
+  depends_on = [
+    azurerm_log_analytics_workspace.log
+  ]
+}
 
 resource "azurerm_role_assignment" "rbac" {
   principal_id         = azurerm_linux_virtual_machine.azvm1.identity[0].principal_id
