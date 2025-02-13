@@ -105,7 +105,9 @@ To confim the data disk is configured at this point, use **lsblk** in the consol
 >**lsblk -P | grep 'TYPE="disk"'**
 
 NAME="sda" MAJ:MIN="8:0" RM="0" SIZE="30G" RO="0" TYPE="disk" MOUNTPOINTS=""
+
 NAME="sdb" MAJ:MIN="8:16" RM="0" SIZE="7G" RO="0" TYPE="disk" MOUNTPOINTS=""
+
 **_NAME="sdc" MAJ:MIN="8:32" RM="0" SIZE="64G" RO="0" TYPE="disk" MOUNTPOINTS=""_**
 
 Ensure the **NAME** of the device, **sdc** is represented in the **[/ansible/myscript.sh](../ansible/myscript.sh)** file for the next steps. If not alter this file for the name of your data disk and save it.
