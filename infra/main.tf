@@ -247,7 +247,7 @@ resource "azurerm_recovery_services_vault" "rsv1" {
 
 
 resource "azurerm_backup_policy_vm" "rsvpol-1" {
-  name                = "vmbackups-lab"
+  name                = "${var.rsgname}-bak"
   policy_type         = "V2"
   recovery_vault_name = azurerm_recovery_services_vault.rsv1.name
   resource_group_name = azurerm_resource_group.rsg1.name
@@ -273,6 +273,13 @@ resource "azurerm_virtual_machine_extension" "ama" {
   depends_on = [
     azurerm_linux_virtual_machine.azvm1
   ]
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "azvm-dcr" {
+  name                    = "${var.vmname}-vmdc"
+  target_resource_id      = azurerm_linux_virtual_machine.azvm1.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.res-5.id
+  description             = "MonitorVM"
 }
 
 resource "azurerm_monitor_data_collection_rule" "res-5" {
@@ -304,9 +311,10 @@ resource "azurerm_monitor_data_collection_rule" "res-5" {
   destinations {
     log_analytics {
       name                  = "VMInsightsPerf-Logs-Dest"
-      workspace_resource_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}/providers/Microsoft.OperationalInsights/workspaces/${var.vmname}-log"
+      workspace_resource_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}/providers/Microsoft.OperationalInsights/workspaces/${var.rsgname}-log"
     }
   }
+
   depends_on = [
     azurerm_log_analytics_workspace.log
   ]

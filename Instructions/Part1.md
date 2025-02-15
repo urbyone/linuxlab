@@ -30,12 +30,15 @@ az login --tenant $ARM_TENANT_ID
 ```
 
 ### 1.1 Set local variables
-These local variables will be passed to the terraform configuration
+These local variables will be passed to the terraform configuration. Replace the youremail@domain.com with the address you would like for the Azure Monitor Alerts
+
+```sh
+emailaddress="youremail@domain.com"
+```
 
 ```sh
 subscription_id=$ARM_SUBSCRIPTION_ID
 objectid=$(az ad signed-in-user show --query id --output tsv)
-emailaddress="youremail@domain.com"
 region="eastus"
 rsgname="RG1"
 vmname="VM1"
@@ -45,7 +48,7 @@ my_ip_cidr="${client_ip}/32"
 tfvarsFilePath=./infra/terraform.tfvars
 ```
 
-**Create the .tfvars file for the terraform workflow**
+**Create a .tfvars file for the terraform workflow**
 
 
 ```sh
@@ -83,8 +86,7 @@ terraform -chdir=./infra fmt
 cat ./infra/terraform.tfvars
 ```
 
-Then run the following **terraform workflow** to kick off the deployment, providing your email address as a variable
-
+Now run the following **terraform workflow** to kick off the deployment. Your email address and userid are provided inline as variables
 
 
 ```sh
@@ -93,11 +95,11 @@ terraform -chdir=./infra validate
 ```sh
 terraform -chdir=./infra plan -var="email=$emailaddress" -var="userid=$objectid"
 ```
-Replace the youremail@domain.com with the address you would like the Azure Monitor Alerts to go and run the apply stage, remembering to type **yes** if you do not use the **-auto-approve** flag
+ Now run the apply, remembering to type **yes** if you do not use the **-auto-approve** flag
 ```sh
 terraform -chdir=./infra apply -var="email=$emailaddress" -var="userid=$objectid"
 ```
-
+Wait for the deployment to complete successfully.
 
 ### 1.4 Verify a connection to the instance
 
@@ -105,6 +107,8 @@ terraform -chdir=./infra apply -var="email=$emailaddress" -var="userid=$objectid
 ```sh
 vm=$(terraform output -raw vm_ip_address)
 storage=$(terraform output -raw storage_account)
+vault=$(terraform output -raw recovery_vault)
+policy=$(terraform output -raw backup_policy)
 ssh -i ~/.ssh/${vmname} adminuser@$vm
 ```
 You will likely receive a **warning** about the host's fingerprint. Continue by typing **_yes_** to add the fingerprint to your known hosts file.
@@ -178,6 +182,11 @@ echo $vm # Show the IP Address to paste into your browser
 **You should no be able to visit the webpage of the nginx server from a web browser**
 ![VM](../images/lab01.png)
 
+
+### 1.8 (Optionally enable VM Backups)
+```sh
+az backup protection enable-for-vm --resource-group $rsgname --vault-name $vault --vm $vmname --policy-name $policy
+```
 
 ## Part 1 Cleanup
 Once you have configured, **remember to save costs by destroying the infrastruture** from the terraform root
