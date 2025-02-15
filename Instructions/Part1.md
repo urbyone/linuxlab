@@ -27,26 +27,15 @@ sudo snap install azcli
 Login to your **az** account:
 ```sh
 az login --tenant $ARM_TENANT_ID
-objectID=$(az ad signed-in-user show --query id --output tsv)
-echo $objectID
 ```
 
-### 1.1 Create an SSH Key Pair 
-
-**Create the SSH Key Pair and set file permissions**
-
-
-```sh
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname}_key -C ${rsgname}
-chmod 600 ~/.ssh/${vmname}_key
-```
-
-### 1.2 Set local variables
+### 1.1 Set local variables
 These local variables will be passed to the terraform configuration
 
 ```sh
 subscription_id=$ARM_SUBSCRIPTION_ID
-userid=$objectID
+objectid=$(az ad signed-in-user show --query id --output tsv)
+emailaddress="youremail@domain.com"
 region="eastus"
 rsgname="RG1"
 vmname="VM1"
@@ -66,10 +55,18 @@ tfvarsFilePath=./infra/terraform.tfvars
   echo "vmname = \"$vmname\""
   echo "vmSKU = \"$vmSKU\""
   echo "subscription_id = \"$subscription_id\""
-  echo "userid = \"$userid\""
   echo "my_ip_cidr = \"$my_ip_cidr\""
 } > $tfvarsFilePath
 
+```
+### 1.1 Create an SSH Key Pair 
+
+**Create the SSH Key Pair and set file permissions**
+
+
+```sh
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname}_key -C ${rsgname}
+chmod 600 ~/.ssh/${vmname}_key
 ```
 
 ### 1.3 Deploy the Azure VM and its dependencies
@@ -78,13 +75,12 @@ Deploy the Virtual Machine and setup the SSH connection. A virtual network and N
 (In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in a later exercise)
 
 **It's Terraform Workflow Time!**
-From your working directory **cd** to the  **./infra** directory check your variables look correct once formatted by terraform
+Check the **./infra/terraform.tfvars** variables look correct once formatted by terraform
 
 
 ```sh
-cd ./infra
-terraform fmt
-cat ./terraform.tfvars
+terraform -chdir=./infra fmt
+cat ./infra/terraform.tfvars
 ```
 
 Then run the following **terraform workflow** to kick off the deployment, providing your email address as a variable
@@ -92,14 +88,14 @@ Then run the following **terraform workflow** to kick off the deployment, provid
 
 
 ```sh
-terraform validate
+terraform -chdir=./infra validate
 ```
 ```sh
-terraform plan
+terraform -chdir=./infra plan -var="email=$emailaddress" -var="userid=$objectid"
 ```
-Replace the "youremail@domain.com" with the address you would like the Azure Monitor Alerts to go and run the apply stage, remembering to type **yes** if you do not use the **-auto-approve** flag
+Replace the youremail@domain.com with the address you would like the Azure Monitor Alerts to go and run the apply stage, remembering to type **yes** if you do not use the **-auto-approve** flag
 ```sh
-terraform apply -var="email=youremail@domain.com"
+terraform -chdir=./infra apply -var="email=$emailaddress" -var="userid=$objectid"
 ```
 
 
@@ -188,5 +184,5 @@ Once you have configured, **remember to save costs by destroying the infrastrutu
 
 
 ```sh
-terraform destroy -auto-approve
+terraform -chdir=./infra destroy -var="email=$emailaddress" -var="userid=$objectid" -auto-approve
 ```

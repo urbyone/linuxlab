@@ -178,7 +178,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {
 
 resource "azurerm_log_analytics_workspace" "log" {
   location            = azurerm_resource_group.rsg1.location
-  name                = "${var.vmname}-log"
+  name                = "${var.rsgname}-log"
   resource_group_name = var.rsgname
   depends_on = [
     azurerm_resource_group.rsg1
@@ -323,14 +323,14 @@ resource "random_string" "random_sto" {
 }
 
 resource "azurerm_storage_account" "sto" {
-  name                     = "${random_string.random_sto.result}sto"
-  resource_group_name      = azurerm_resource_group.rsg1.name
-  location                 = azurerm_resource_group.rsg1.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+  name                            = "${random_string.random_sto.result}sto"
+  resource_group_name             = azurerm_resource_group.rsg1.name
+  location                        = azurerm_resource_group.rsg1.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
   default_to_oauth_authentication = true
-  https_traffic_only_enabled = true
-  shared_access_key_enabled = false
+  https_traffic_only_enabled      = true
+  shared_access_key_enabled       = true
 }
 
 resource "azurerm_storage_share" "share1" {

@@ -7,7 +7,7 @@ variable "subscription_id" {
 
 variable "userid" {
   description = "Your Azure / EntraID for RBAC assignments"
-  type = string
+  type        = string
 }
 
 variable "my_ip_cidr" {
