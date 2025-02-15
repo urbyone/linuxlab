@@ -1,44 +1,64 @@
-## Part 1 : Deploying Linux Virtual Machine using Terraform and Ansible
+# Part 1
 
-Please see the Prerequisites in the **[README](../README.md)** for this walkthrough beore starting.
+Please remember to see the prerequisites in the **[README](../README.md)** for this walkthrough before starting.
 
-**A note on the code snippets used in this walkthrough**
+**_A note on the code snippets used in this walkthrough_**
 
-**sh**
+
 ```
-# This code runs on your local lab machine / client
+# This code in a code block runs on your local lab machine / client to copy
 ```
 
-and...
-> **adminuser@vmname:~$** # This code runs on the virtual machine 
 
-### 1.1 Create an SSH Key Pair and configure variables
+> **adminuser@vmname:~$** These commands runs on the Azure virtual machine in the SSH session
 
-**Set some local variables**
-Edit the below variables as required to change your configuration
+### 1.0 Log into Azure CLI and get your objectid from Azure
+Ensure you have installed **azcli** and **azcopy** setup in the console  environment variables for this step. Your objectid will be used to set EntraID **RBAC Roles** in your **ResourceGroup**
 
-**sh**
+```sh
+azcopy --version
+azcli --version
+```
+Run the below in your local if not currently installed in distro
+```sh
+sudo apt update && sudo apt upgrade
+sudo snap install azcli
+```
+Login to your **az** account:
+```sh
+az login --tenant $ARM_TENANT_ID
+objectID=$(az ad signed-in-user show --query id --output tsv)
+echo $objectID
+```
+
+### 1.1 Create an SSH Key Pair 
+
+**Create the SSH Key Pair and set file permissions**
+
+
+```sh
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname}_key -C ${rsgname}
+chmod 600 ~/.ssh/${vmname}_key
+```
+
+### 1.2 Set local variables
+These local variables will be passed to the terraform configuration
 
 ```sh
 subscription_id=$ARM_SUBSCRIPTION_ID
-region="uksouth"
-rsgname="thecite-linuxlab"
-vmname="ecom-nginx-web01"
+userid=$objectID
+region="eastus"
+rsgname="RG1"
+vmname="VM1"
 vmSKU="Standard_DS1_v2"
 client_ip=$(curl -s http://api.ipify.org)
 my_ip_cidr="${client_ip}/32"
 tfvarsFilePath=./infra/terraform.tfvars
 ```
-**Create the SSH Key Pair and set file permissions**
 
-**sh**
-```sh
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/${vmname} -C "thecite-linuxlabs"
-chmod 600 ~/.ssh/${vmname}
-```
-**Create the .tfvars file for terraform workflow**
+**Create the .tfvars file for the terraform workflow**
 
-**sh**
+
 ```sh
 {
   echo "region = \"$region\""
@@ -46,20 +66,21 @@ chmod 600 ~/.ssh/${vmname}
   echo "vmname = \"$vmname\""
   echo "vmSKU = \"$vmSKU\""
   echo "subscription_id = \"$subscription_id\""
+  echo "userid = \"$userid\""
   echo "my_ip_cidr = \"$my_ip_cidr\""
 } > $tfvarsFilePath
 
 ```
 
-### 2.2 Deploy the Azure VM and its dependencies
+### 1.3 Deploy the Azure VM and its dependencies
 Deploy the Virtual Machine and setup the SSH connection. A virtual network and NSG will be used to isolate inbound traffic from the internet. 
 
-In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in a later exercise.
+(In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in a later exercise)
 
 **It's Terraform Workflow Time!**
-**cd** to the  **./infra** directory check your variables look correct once formatted by terraform
+From your working directory **cd** to the  **./infra** directory check your variables look correct once formatted by terraform
 
-**sh**
+
 ```sh
 cd ./infra
 terraform fmt
@@ -68,7 +89,7 @@ cat ./terraform.tfvars
 
 Then run the following **terraform workflow** to kick off the deployment, providing your email address as a variable
 
-**sh**
+
 
 ```sh
 terraform validate
@@ -76,24 +97,26 @@ terraform validate
 ```sh
 terraform plan
 ```
+Replace the "youremail@domain.com" with the address you would like the Azure Monitor Alerts to go and run the apply stage, remembering to type **yes** if you do not use the **-auto-approve** flag
 ```sh
 terraform apply -var="email=youremail@domain.com"
 ```
 
 
-### 2.3 Connect to the instance to ensure everything is working
+### 1.4 Verify a connection to the instance
 
-**sh**
+
 ```sh
 vm=$(terraform output -raw vm_ip_address)
+storage=$(terraform output -raw storage_account)
 ssh -i ~/.ssh/${vmname} adminuser@$vm
 ```
 You will likely receive a **warning** about the host's fingerprint. Continue by typing **_yes_** to add the fingerprint to your known hosts file.
 
 
 ```sh
-The authenticity of host '172.166.195.243 (172.166.195.243)' can't be established.
-ED25519 key fingerprint is SHA256:+ycbee44QbwBianvFg8zSU9F05xaQ3rqXftqwBUW75o.
+The authenticity of host 'xxx.xxx.xxx.xxx (xxx.xxx.xxx.xxx)' can't be established.
+ED25519 key fingerprint is SHA256:+xxxxxxxxyyyyyyyzzzzzzzzz.
 This key is not known by any other names.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
@@ -108,51 +131,50 @@ NAME="sda" MAJ:MIN="8:0" RM="0" SIZE="30G" RO="0" TYPE="disk" MOUNTPOINTS=""
 
 NAME="sdb" MAJ:MIN="8:16" RM="0" SIZE="7G" RO="0" TYPE="disk" MOUNTPOINTS=""
 
-**_NAME="sdc" MAJ:MIN="8:32" RM="0" SIZE="64G" RO="0" TYPE="disk" MOUNTPOINTS=""_**
+**_NAME="sdc" MAJ:MIN="8:32" RM="0" SIZE="4G" RO="0" TYPE="disk" MOUNTPOINTS=""_**
 
-Ensure the **NAME** of the device, **sdc** is represented in the **[/ansible/myscript.sh](../ansible/myscript.sh)** file for the next steps. If not alter this file for the name of your data disk and save it.
+Ensure the **NAME** of the device, **sdc** is represented in the **[/ansible/setupscript.sh](../ansible/setupscript.sh)** file for the next steps. If not alter this file for the name of your data disk in the above and save it.
 
 
 Then type **_'logout'_** to get back to the local terminal.
 
 >**_adminuser@vmname:~$_ logout**
 
-### 2.4 Navigate to the Ansible directory to deploy the config
+### 1.5 Configure the server using Ansible
 
-**sh**
+
 ```sh
-cd ../ansible
 touch hosts
 
 {
  echo "[web]"
- echo "$vm ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/${vmname}"
+ echo "$vm ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/${vmname}_key"
 } > hosts
 
 ```
 **Run the Ansible Playbook**
-From the ansible directory, run the playbook. This playbook should:
+This playbook should:
 - Install Nginx
-- Copy the myscript.sh and run it on the server to configure the **/datadrive** disk.
+- Copy the setupscript.sh and run it on the server to configure the **/datadrive** disk.
 
-**sh**
+
 ```sh
-ansible-playbook -i hosts config.yml
+ansible-playbook -i hosts ansible.yml
 ```
 Wait for the ansible tasks to complete observing the results of the **PLAY RECAP** for any errors.
 
 
-### 2.5 Check the web server now has a data drive
+### 1.6 Check the web server now has a data drive
 
-**sh**
+
 ```sh
-ssh -i ~/.ssh/${vmname} adminuser@$vm lsblk -P | grep 'NAME="sdc1"'
+ssh -i ~/.ssh/${vmname}_key adminuser@$vm lsblk -P | grep 'NAME="sdc1"'
 ```
-**_NAME="sdc1" MAJ:MIN="8:33" RM="0" SIZE="64G" RO="0" TYPE="part" MOUNTPOINTS="/datadrive"_**
+**_NAME="sdc1" MAJ:MIN="8:33" RM="0" SIZE="4G" RO="0" TYPE="part" MOUNTPOINTS="/datadrive"_**
 
-### 2.6 Check the web server is now up and running
+### 1.7 Check the web server is now up and running
 
-**sh**
+
 ```sh
 curl $vm # Gets a response from the web server
 echo $vm # Show the IP Address to paste into your browser
@@ -164,8 +186,7 @@ echo $vm # Show the IP Address to paste into your browser
 ## Part 1 Cleanup
 Once you have configured, **remember to save costs by destroying the infrastruture** from the terraform root
 
-**sh**
+
 ```sh
-cd ../infra/
 terraform destroy -auto-approve
 ```

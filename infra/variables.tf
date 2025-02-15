@@ -4,6 +4,12 @@ variable "subscription_id" {
   type        = string
 
 }
+
+variable "userid" {
+  description = "Your Azure / EntraID for RBAC assignments"
+  type = string
+}
+
 variable "my_ip_cidr" {
   description = "client IP(s) for SSH on Security Group Rule in CIDR notation"
   type        = string

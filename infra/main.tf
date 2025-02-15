@@ -1,5 +1,5 @@
 locals {
-  ssh_key_path = "~/.ssh/${var.vmname}.pub"
+  ssh_key_path = "~/.ssh/${var.vmname}_key.pub"
 }
 
 locals {
@@ -66,6 +66,8 @@ resource "azurerm_linux_virtual_machine" "azvm1" {
   network_interface_ids = ["/subscriptions/${var.subscription_id}/resourceGroups/${azurerm_resource_group.rsg1.name}/providers/Microsoft.Network/networkInterfaces/${azurerm_network_interface.nic1.name}"]
   resource_group_name   = azurerm_resource_group.rsg1.name
   size                  = var.vmSKU
+
+
   additional_capabilities {
   }
   admin_ssh_key {
@@ -87,7 +89,6 @@ resource "azurerm_linux_virtual_machine" "azvm1" {
     sku       = "server"
     version   = "latest"
   }
-
 
 }
 
@@ -153,9 +154,10 @@ resource "azurerm_managed_disk" "data_disk" {
   name                 = "${var.vmname}-datadisk"
   location             = azurerm_resource_group.rsg1.location
   resource_group_name  = azurerm_resource_group.rsg1.name
-  storage_account_type = "StandardSSD_LRS"
+  storage_account_type = "Premium_LRS"
   create_option        = "Empty"
-  disk_size_gb         = 64
+  disk_size_gb         = 4
+
 
   depends_on = [
     azurerm_resource_group.rsg1
@@ -310,9 +312,60 @@ resource "azurerm_monitor_data_collection_rule" "res-5" {
   ]
 }
 
-resource "azurerm_role_assignment" "rbac" {
+
+resource "random_string" "random_sto" {
+  length  = 12
+  special = false
+  upper   = false
+
+
+
+}
+
+resource "azurerm_storage_account" "sto" {
+  name                     = "${random_string.random_sto.result}sto"
+  resource_group_name      = azurerm_resource_group.rsg1.name
+  location                 = azurerm_resource_group.rsg1.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  default_to_oauth_authentication = true
+  https_traffic_only_enabled = true
+  shared_access_key_enabled = false
+}
+
+resource "azurerm_storage_share" "share1" {
+  name                 = "share1"
+  storage_account_name = azurerm_storage_account.sto.name
+  quota                = 5
+}
+
+resource "azurerm_storage_container" "container1" {
+  name                  = "data"
+  storage_account_name  = azurerm_storage_account.sto.name
+  container_access_type = "private"
+}
+
+resource "azurerm_role_assignment" "rbac-user-blob" {
+  principal_id         = var.userid
+  scope                = azurerm_resource_group.rsg1.id
+  role_definition_name = "Storage Blob Data Contributor"
+
+}
+resource "azurerm_role_assignment" "rbac-user-smb" {
+  principal_id         = var.userid
+  scope                = azurerm_resource_group.rsg1.id
+  role_definition_name = "Storage File Data SMB Share Contributor"
+
+}
+
+resource "azurerm_role_assignment" "rbac-vm-blob" {
   principal_id         = azurerm_linux_virtual_machine.azvm1.identity[0].principal_id
   scope                = azurerm_resource_group.rsg1.id
-  role_definition_name = "Contributor"
+  role_definition_name = "Storage Blob Data Contributor"
+}
 
+resource "azurerm_role_assignment" "rbac-vm-smb" {
+  principal_id         = azurerm_linux_virtual_machine.azvm1.identity[0].principal_id
+  scope                = azurerm_resource_group.rsg1.id
+  role_definition_name = "Storage File Data SMB Share Contributor"
 }
