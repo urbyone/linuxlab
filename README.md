@@ -27,7 +27,7 @@ You are also interested in using SSH to securely connect to the virtual machine,
 - Ansible
 
 ### Objectives
-#### **[Part 1](./infra/Part1/Part1.md)**
+#### **[Part 1](./infra/part1/Part1.md)**
 
 In part 1, the infrastructure for the scenario is deployed locally from a workspace or local lab using a few CLI tools and commands.
 
