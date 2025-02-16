@@ -18,8 +18,10 @@ Please also remember to see the prerequisites in the **[README](../../README.md)
 > **adminuser@VM1:~$** These commands runs on the Azure Virtual Machine in the SSH session
 
 ### 1.0 Set working folder
-Ensure you are in the Part 1 working folder for this part.
+Step into your working folder and clone the repo is you do not have it locally. Ensure you are in the Part 1 working folder for this part.
+
 ```sh
+git clone https://github.com/urbyone/linuxlab
 cd ./part1
 ```
 
