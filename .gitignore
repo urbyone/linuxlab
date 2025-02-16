@@ -6,6 +6,9 @@
 # ansible
 /ansible/hosts
 
+#baselines
+/Instructions
+
 # Local .terraform directories
 **/.terraform/*
 

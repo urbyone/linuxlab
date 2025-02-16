@@ -5,11 +5,6 @@ variable "subscription_id" {
 
 }
 
-variable "userid" {
-  description = "Your Azure / EntraID for RBAC assignments"
-  type        = string
-}
-
 variable "my_ip_cidr" {
   description = "client IP(s) for SSH on Security Group Rule in CIDR notation"
   type        = string
@@ -32,10 +27,5 @@ variable "vmname" {
 
 variable "vmSKU" {
   description = "the SKU of the virtul machine size"
-  type        = string
-}
-
-variable "email" {
-  description = "email address for monitoring alerts"
   type        = string
 }

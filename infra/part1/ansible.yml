@@ -17,10 +17,3 @@
         name: nginx
         state: started
         enabled: yes
-    - name: Copy setup script to remote server
-      ansible.builtin.copy:
-        src: myscript.sh
-        dest: /tmp/setupscript.sh
-        mode: '0755'
-    - name: Run a script with arguments (free form)
-      command: /tmp/setupscript.sh
