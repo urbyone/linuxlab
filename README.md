@@ -34,9 +34,13 @@ In part 1, the infrastructure for the scenario is deployed locally from a worksp
 In Part 1 we will implement the guided project in line with the requirements:
 
 - Create an SSH key pair and set the required permissions
-- Create an Ubuntu Linux virtual machine
+- Create an Ubuntu Linux Virtual Machine using Terraform
 - Create an NSG and open up the ports for SSH and web traffic*
 - Connect to the virtual machine using the SSH key
-- Install the Nginx web service
+- Install the Nginx web service using a simple Ansible playbook
 
 ***Note that in production scenarios this will often never be the case to expose infrastructure servers directly to the internet since it does not adhere to zero-trust architecture patterns and does not provide defense in depth.**
+
+#### **[Part 2 - Coming Soon]**
+#### **[Part 3 - Coming Soon]**
+#### **[Part 4 - Coming Soon]**
