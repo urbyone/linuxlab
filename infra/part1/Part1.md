@@ -1,6 +1,6 @@
 # Part 1
 
-This part 1 is based on the Microsoft Learn guided project section **[Exercise 01: Configure an Azure Linux virtual machine](https://microsoftlearning.github.io/Deploy-and-administer-Linux-virtual-machines-in-Azure/Instructions/Labs/Lab01-configure-vms.html){:target="_blank"}**
+This part 1 is based on the Microsoft Learn guided project section **[Exercise 01: Configure an Azure Linux virtual machine](https://microsoftlearning.github.io/Deploy-and-administer-Linux-virtual-machines-in-Azure/Instructions/Labs/Lab01-configure-vms.html)**
 
 Please also remember to see the prerequisites in the **[README](../../README.md)** for this walkthrough before starting.
 
