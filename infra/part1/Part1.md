@@ -148,5 +148,6 @@ Once you have configured, **remember to save costs by destroying the infrastrutu
 
 
 ```sh
+rm hosts
 terraform destroy -auto-approve
 ```

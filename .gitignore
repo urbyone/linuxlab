@@ -9,6 +9,9 @@
 #baselines
 /Instructions
 
+#Ansible hosts
+/infra/part1/hosts
+
 # Local .terraform directories
 **/.terraform/*
 
