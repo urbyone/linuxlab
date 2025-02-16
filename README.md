@@ -31,7 +31,7 @@ You are also interested in using SSH to securely connect to the virtual machine,
 
 In part 1, the infrastructure for the scenario is deployed locally from a workspace or local lab using a few CLI tools and commands.
 
-In Part 1 we will implement the guided project in line with the requirements:
+We will implement the guided project in line with the requirements for part 1:
 
 - Create an SSH key pair and set the required permissions
 - Create an Ubuntu Linux Virtual Machine using Terraform
