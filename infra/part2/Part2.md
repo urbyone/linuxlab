@@ -188,7 +188,7 @@ Now check Azure Monitor and your email inbox for alerts triggered and explore th
 
 ### 2.9 Restore the VM size configuration using terraform (Optional)
 
-You have just resized the VM manually in the previous step which no lnger matches your configuration files. This is sometimes known as a configuration drift. Use the terraform workflow to repair the config.
+You have just resized the VM manually in the previous step which now no longer matches your original configuration files. This is sometimes known as a configuration drift. Use the terraform workflow to repair the config back to your original state.
 
 ```sh
 terraform plan
