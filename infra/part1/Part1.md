@@ -24,7 +24,7 @@ Step into your working folder and clone the repo is you do not have it locally. 
 
 ```sh
 git clone https://github.com/urbyone/linuxlab
-cd ./part1
+cd ./infra/part1
 ```
 
 ### 1.1 Set local variables
