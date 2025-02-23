@@ -26,8 +26,7 @@ You are also interested in using SSH to securely connect to the virtual machine,
 - Terraform (configured with access to Azure Subscription with Environment Variables)
 - Ansible
 
-### Objectives
-#### **[Part 1](./infra/part1/Part1.md)**
+### Objectives for Part 1
 
 In part 1, the infrastructure for the scenario is deployed locally from a workspace or local lab using a few CLI tools and commands.
 
@@ -39,8 +38,13 @@ We will implement the guided project in line with the requirements for part 1:
 - Connect to the virtual machine using the SSH key
 - Install the Nginx web service using a simple Ansible playbook
 
-***Note that in production scenarios this will often never be the case to expose infrastructure servers directly to the internet since it does not adhere to zero-trust architecture patterns and does not provide defense in depth.**
+![Part1](./images/lab01.png)
+### **[Go to Part 1 >>](./infra/part1/Part1.md)**
 
-#### **[Part 2 - Coming Soon]**
-#### **[Part 3 - Coming Soon]**
-#### **[Part 4 - Coming Soon]**
+### Objectives for Part 2
+
+In part 2, your organization is migrating their virtual machine workloads to Azure. It is important that you are notified of any significant infrastructure changes. You plan to explore the capabilities of Azure Monitor, including alerts and Log Analytics.
+
+![Part2](./images/lab02.png)
+### **[Go to Part 2 >>](./infra/part2/Part2.md)**
+
