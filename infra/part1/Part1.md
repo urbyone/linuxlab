@@ -2,6 +2,8 @@
 
 This part 1 is based on the Microsoft Learn guided project section **[Exercise 01: Configure an Azure Linux virtual machine](https://microsoftlearning.github.io/Deploy-and-administer-Linux-virtual-machines-in-Azure/Instructions/Labs/Lab01-configure-vms.html)**
 
+![VM](../../images/lab01.png)
+
 Please also remember to see the prerequisites in the **[README](../../README.md)** for this walkthrough before starting.
 
 - Skill 1: Use Terraform to create the virtual machine instead of the Azure Portal.
@@ -15,7 +17,7 @@ Please also remember to see the prerequisites in the **[README](../../README.md)
 # This code in a code block runs on your local to copy and paste.
 ```
 
-> **adminuser@VM1:~$** These commands runs on the Azure Virtual Machine in the SSH session
+> **adminuser@VM1:~$** These commands run on the Azure Virtual Machine in the SSH session
 
 ### 1.0 Set working folder
 Step into your working folder and clone the repo is you do not have it locally. Ensure you are in the Part 1 working folder for this part.
@@ -66,7 +68,7 @@ chmod 600 ~/.ssh/${vmname}_key
 ### 1.3 Deploy the Azure VM and its dependencies
 Deploy the Virtual Machine and setup the SSH connection. A virtual network and NSG will be used to isolate inbound traffic from the internet, allowing your client's IP address for **port 22**. 
 
-(In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in later parts)
+**In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in later parts**
 
 **It's Terraform Workflow Time!**
 
@@ -78,7 +80,7 @@ terraform fmt
 cat ./terraform.tfvars
 ```
 
-Now run the following **terraform workflow** to kick off the deployment. Your email address and userid are provided inline as variables
+Now run the following **terraform workflow** to kick off the deployment.
 
 ```sh
 terraform init
@@ -141,8 +143,7 @@ Wait for the ansible tasks to complete observing the results of the **PLAY RECAP
 curl $vm # Gets a response from the web server
 echo $vm # Show the IP Address to paste into your browser
 ```
-**You should no be able to visit the webpage of the nginx server from a web browser**
-![VM](../../images/lab01.png)
+**You should now be able to visit the webpage of the nginx server from a web browser**
 
 
 ## Part 1 Cleanup
