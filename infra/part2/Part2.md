@@ -2,6 +2,8 @@
 
 Part 2 is based on the Microsoft Learn guided project section **[Exercise 02: Monitor an Azure Linux virtual machine](https://microsoftlearning.github.io/Deploy-and-administer-Linux-virtual-machines-in-Azure/Instructions/Labs/Lab02-monitor-vms.html)**
 
+### Architecture diagram
+
 ![VM](../../images/lab02.png)
 
 Please also remember to see the prerequisites in the **[README](../../README.md)** for this walkthrough before starting.
