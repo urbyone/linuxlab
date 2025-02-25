@@ -21,11 +21,10 @@ You are also interested in using SSH to securely connect to the virtual machine,
 - A Linux environment, [WSL2 on Windows](https://learn.microsoft.com/en-us/windows/wsl/install) or [GitHub Codespace](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces#:~:text=GitHub%20Codespaces%20provides%20cloud-hosted%20development%20environments%20for%20any,Code%20or%20a%20browser-based%20editor%20that%27s%20accessible%20anywhere.)
 - An Azure Subscription with Owner RBAC
 - VS Code or Preferred IDE
-- Azure CLI
-- Git
 - Terraform (configured with access to Azure Subscription with Environment Variables)
 - Ansible
-- AzCopy
+- Azure CLI
+- Git
 
 ### Objectives for Part 1
 
@@ -46,6 +45,28 @@ We will implement the guided project in line with the requirements for part 1:
 
 In part 2, your organization is migrating their virtual machine workloads to Azure. It is important that you are notified of any significant infrastructure changes. You plan to explore the capabilities of Azure Monitor, including alerts and Log Analytics.
 
-![Part2](./images/lab02.png)
+We will implement the following objectives in Part 2
+- Use Terraform to create the virtual machine, VM2
+- Install the Nginx web service using Ansible.
+- Configure a Data Collection Rule for Azure Monitoring
+- Configure action groups and notifications.
+- Create alerts.
+- Trigger an alert by resizing the virtual machine.
+- Configure an alert processing rule.
+
+![Part3](./images/lab02.png)
 ### **[Go to Part 2 >>](./infra/part2/Part2.md)**
 
+### Objectives for Part 3
+
+In part 3, you have been asked to explore how virtual machines can use Azure storage. You want to explore using Azure file shares and Blobs. You want to add and mount a data disk on the virtual machine. Lastly, you want to explore how to transfer data from Azure to the virtual machine with azcopy.
+
+We explore how to use the tools in this lab to automate this scenario by implementing the following in Part 3
+
+- Use **Terraform** to create the virtual machine and add a new _data disk_ - also create an Azure Storage Account with a Blob Container and a File Share  and set the **RBAC** roles
+- Use **Ansible** to install and enable **Nginx**, configure the attached **data disk** and mount a connection to the **Azure File Share**
+- Access the Azure file Share from the virtual machine.
+- Copy a file from Azure Blob storage to the virtual machine data disk.
+
+![Part3](./images/lab03.png)
+### **[Go to Part 3 >>](./infra/part3/Part3.md)**
