@@ -25,6 +25,7 @@ You are also interested in using SSH to securely connect to the virtual machine,
 - Git
 - Terraform (configured with access to Azure Subscription with Environment Variables)
 - Ansible
+- AzCopy
 
 ### Objectives for Part 1
 

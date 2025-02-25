@@ -99,12 +99,15 @@ terraform plan
 terraform apply
 ```
 Wait for the deployment to complete successfully.
-
-### 1.4 Verify a connection to the instance
-
+Then get some values from the **terrform outputs:**
 
 ```sh
 vm=$(terraform output -raw vm_ip_address)
+```
+
+### 1.4 Verify a connection to the instance
+
+```sh
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm
 ```
 You will likely receive a **warning** about the host's fingerprint. Continue by typing **_yes_** to add the fingerprint to your known hosts file.

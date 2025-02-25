@@ -6,11 +6,14 @@
 # ansible
 /ansible/hosts
 
+#connectionscript for Azure Storage
+/infra/**/connectionscript.sh
+
 #baselines
 /Instructions
 
 #Ansible hosts
-/infra/part1/hosts
+/infra/**/hosts
 
 # Local .terraform directories
 **/.terraform/*

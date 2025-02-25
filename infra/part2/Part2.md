@@ -17,7 +17,7 @@ Please also remember to see the prerequisites in the **[README](../../README.md)
 - Skill 7: Trigger an alert by resizing the virtual machine.
 - Skill 8: Configure an alert processing rule.
 
-**Note:** _While it is good practice to include monitoring capability in deployments, it's often better to monitor at using a baseline. We will explore monitoring baselines in a later part to see how then can monitor your resources at scale but will include it in the terraform configuration as per the Lab scenario provided._
+**Note:** _While it is good practice to include monitoring capability in deployments, it's often better to monitor at using a baseline. We will explore monitoring baselines in a later part to see how you can then monitor your resources at scale but we will include it in the terraform configuration as per the Lab scenario provided._
 
 **_A note on the code snippets used in this walkthrough_**
 
@@ -110,13 +110,18 @@ terraform plan
 ```sh
 terraform apply
 ```
-Wait for the deployment to complete successfully.
 
+Wait for the deployment to complete successfully.
+Then get some values from the **terrform outputs:**
+
+```sh
+vm=$(terraform output -raw vm_ip_address)
+```
 ### 2.4 Verify a connection to the instance
 
 
 ```sh
-vm=$(terraform output -raw vm_ip_address)
+
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm
 ```
 You will likely receive a **warning** about the host's fingerprint. Continue by typing **_yes_** to add the fingerprint to your known hosts file.
