@@ -291,14 +291,17 @@ ssh -i ~/.ssh/${vmname}_key adminuser@$vm
 ```
 Note the **Azure Managed Disk** on **/datadrive** should be empty:
 >**adminuser@VM3~$ ls -l /datadrive**
+
 >total 0
 
 Now login to **AZCOPY** using the **VM's managed identity** preconfigured by Terraform, and copy the blob from the container to the /datadrive disk. 
 
 >**adminuser@VM3~$  sudo /opt/azcopy/azcopy login --identity**
+
 >INFO: Login with identity succeeded.
 
 >**adminuser@VM3~$  sudo /opt/azcopy/azcopy copy _urlblob_ /datadrive**
+
 Number of File Transfers: 1
 Number of Folder Property Transfers: 0
 Number of Symlink Transfers: 0
