@@ -147,7 +147,9 @@ touch hosts
 
 ```
 **Run the Ansible Playbook**
+
 This playbook should:
+
 - Install Nginx
 
 ```sh
@@ -162,6 +164,15 @@ Wait for the ansible tasks to complete observing the results of the **PLAY RECAP
 curl $vm # Gets a response from the web server
 echo $vm # Show the IP Address to paste into your browser
 ```
+
+**_Welcome to nginx!_**
+_If you see this page, the nginx web server is successfully installed and working. Further configuration is required._
+
+_For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com._
+
+_Thank you for using nginx._
+
 **You should now be able to visit the webpage of the nginx server from a web browser and have the following resources:**
 
 ![RSG](../../images/RG2.png)
