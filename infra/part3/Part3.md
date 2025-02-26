@@ -295,6 +295,7 @@ Note the **Azure Managed Disk** on **/datadrive** should be empty:
 
 >total 0
 
+### 3.8.3 Copy Blob file from the Storage Account to the VM Data Disk
 Now login to **AZCOPY** (deployed via Ansible earlier) using the **VM's managed identity** preconfigured by Terraform, and copy the blob from the container to the /datadrive disk. 
 
 >**adminuser@VM3~$  sudo /opt/azcopy/azcopy login --identity**
@@ -318,7 +319,7 @@ Final Job Status: Completed
 
 >**adminuser@VM3~$  ls -l /datadrive**
 
-The blob should now have been downloaded to the disk on /datadrive and you can logoff to complete the lab.
+The blob should now have been downloaded to the disk on **/datadrive** and you can logoff to complete the lab.
 
 >**adminuser@VM3~$ logout**
 
