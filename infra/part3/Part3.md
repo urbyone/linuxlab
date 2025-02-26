@@ -179,11 +179,11 @@ First we will copy the script template from the repo to a new **connectionscript
 
 For this we will use the **sed** command to perform an in-place upgrade of the storage account details before running **Ansible**
 
-#### 3.6.1 Copy the template connection script to a bash script
+### 3.6.1 Copy the template connection script to a bash script
 ```sh
 cp connectionscript.txt connectionscript.sh # The .sh file will be added to .gitignore so credentials are not in the version control
 ```
-#### 3.6.2 Replace the details in the new bash script
+### 3.6.2 Replace the details in the new bash script
 ```sh
 sed -i "s/insertstorageaccountnamehere/${storageaccount}/g" ./connectionscript.sh && sed -i "s/insertsharenamehere/${sharename}/g" ./connectionscript.sh 
 ```
