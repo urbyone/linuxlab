@@ -242,7 +242,7 @@ ssh -i ~/.ssh/${vmname}_key adminuser@$vm lsblk -P | grep 'NAME="sdc1"'
 Should return something similar to:
 >**NAME="sdc1"** MAJ:MIN="8:33" RM="0" **SIZE="4G"** RO="0" TYPE="part" MOUNTPOINTS=**"/datadrive"**
 
-### 3.73 Check that /mnt/share1 on the VM is mounted to Azure Files
+### 3.72 Check that /mnt/share1 on the VM is mounted to Azure Files
 The Azure File Share should have been mounted
 ```sh
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls /mnt
