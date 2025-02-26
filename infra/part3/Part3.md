@@ -11,7 +11,7 @@ Please also remember to see the prerequisites in the **[README](../../README.md)
 - Skill 1: Use **Terraform** to create the virtual machine and add a new _data disk_ - also create an Azure Storage Account with a Blob Container and a File Share  and set the **RBAC** roles
 - Skill 2: Connect to the virtual machine using your SSH key.
 - Skill 3: Use **Ansible** to install and enable **Nginx**, configure the attached **data disk** and mount a connection to the **Azure File Share**
-- Skill 4: Access the Azure file Share from the virtual machine.
+- Skill 4: Access the Azure File Share from the virtual machine.
 - Skill 5: Copy a file from Azure Blob storage to the virtual machine data disk.
 
 

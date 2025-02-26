@@ -152,7 +152,7 @@ echo $vm # Show the IP Address to paste into your browser
 
 
 ## Part 1 Cleanup
-Once you have configured, **remember to save costs by destroying the infrastruture**
+Once you have finished, **remember to save costs by destroying the infrastruture**
 
 
 ```sh
