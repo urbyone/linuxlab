@@ -233,7 +233,7 @@ _Thank you for using nginx._
 
 ![RSG](../../images/RG3.png)
 
-### 3.71 Check the web server now also has the data drive configured
+### 3.7.1 Check the web server now also has the data drive configured
 
 Run **lsblk** over ssh to ensure the datadrive has been partitioned
 ```sh
@@ -242,14 +242,14 @@ ssh -i ~/.ssh/${vmname}_key adminuser@$vm lsblk -P | grep 'NAME="sdc1"'
 Should return something similar to:
 >**NAME="sdc1"** MAJ:MIN="8:33" RM="0" **SIZE="4G"** RO="0" TYPE="part" MOUNTPOINTS=**"/datadrive"**
 
-### 3.72 Check that /mnt/share1 on the VM is mounted to Azure Files
+### 3.7.2 Check that /mnt/share1 on the VM is mounted to Azure Files
 The Azure File Share should have been mounted
 ```sh
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls /mnt
 ```
 >share1
 
-### 3.73 Copy the example 'filedoc.txt' to the Azure Files share
+### 3.7.3 Copy the example 'filedoc.txt' to the Azure Files share
 In this step you will copy a file to the Azure Storage fileshare using AzCli and a temporary SAS token
 
 Create a new SAS token with a **60 minute expiry** for Azure Files
@@ -262,7 +262,7 @@ Upload the **filedoc.txt** in the files folder to the new file share
 az storage file upload -s $sharename --account-name $storageaccount --source ../../files/filedoc.txt  --sas-token $sas
 ```
 
-### 3.74 Verify you can now view the uploaded file on the VM
+### 3.7.4 Verify you can now view the uploaded file on the VM
 ```sh
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls -l /mnt/${sharename}
 ```
