@@ -196,7 +196,9 @@ sed -i "s|"insertstoragekeyhere"|${key_trim}|g" connectionscript.sh
 
 
 **Run the Ansible Playbook**
+
 This playbook should:
+
 - **Install Nginx**
 - **Install cifs-utils**
 - **Configure the new data disk**
