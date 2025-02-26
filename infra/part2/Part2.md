@@ -212,7 +212,7 @@ The VM should have resized from Standard_DS2_v2 to
 >Standard_DS1_v2
 
 ## Part 2 Cleanup
-Once you have configured, **remember to save costs by destroying the infrastruture**
+Once you have finished, **remember to save costs by destroying the infrastruture**
 
 
 ```sh

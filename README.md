@@ -61,11 +61,11 @@ We will implement the following objectives in Part 2
 
 In part 3, you have been asked to explore how virtual machines can use Azure storage. You want to explore using Azure file shares and Blobs. You want to add and mount a data disk on the virtual machine. Lastly, you want to explore how to transfer data from Azure to the virtual machine with azcopy.
 
-We explore how to use the tools in this lab to automate this scenario by implementing the following in Part 3
+We include the requirements from the previous 2 parts but now also explore how to use the tools in this lab to automate the storage scenarios by implementing the following in Part 3
 
 - Use **Terraform** to create the virtual machine and add a new _data disk_ - also create an Azure Storage Account with a Blob Container and a File Share  and set the **RBAC** roles
 - Use **Ansible** to install and enable **Nginx**, configure the attached **data disk** and mount a connection to the **Azure File Share**
-- Access the Azure file Share from the virtual machine.
+- Access the Azure File Share from the virtual machine.
 - Copy a file from Azure Blob storage to the virtual machine data disk.
 
 ![Part3](./images/lab03.png)

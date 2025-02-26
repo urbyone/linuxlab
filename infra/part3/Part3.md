@@ -127,7 +127,7 @@ terraform plan
 terraform apply
 ```
 Wait for the deployment to complete successfully.
-Then we will retrieve some values from the **terraform outputs** that we will need to connect the server to the **Azure Storage** Account
+Then we will retrieve some values from the **terraform outputs** that we will need to connect the server to the **Azure Storage** account
 
 ```sh
 vm=$(terraform output -raw vm_ip_address)
@@ -207,7 +207,9 @@ This playbook should:
 ```sh
 ansible-playbook -i hosts ansible.yml
 ```
-Wait for the ansible tasks to complete observing the results of the **PLAY RECAP** for any errors.
+Wait for the ansible tasks to complete observing the results of the **PLAY RECAP** for any errors. The results should similar to this:
+
+**_ok=10   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0_**
 
 ### 3.7 Check the web server is now up and running
 
@@ -217,13 +219,13 @@ curl $vm # Gets a response from the web server
 echo $vm # Show the IP Address to paste into your browser
 ```
 
-**Welcome to nginx!**
-If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+**_Welcome to nginx!_**
+_If you see this page, the nginx web server is successfully installed and working. Further configuration is required._
 
-For online documentation and support please refer to nginx.org.
-Commercial support is available at nginx.com.
+_For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com._
 
-Thank you for using nginx.
+_Thank you for using nginx._
 
 **You should now be able to visit the webpage of the nginx server from a web browser and have the following resources:**
 
@@ -236,7 +238,7 @@ Run **lsblk** over ssh to ensure the datadrive has been partitioned
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm lsblk -P | grep 'NAME="sdc1"'
 ```
 Should return something similar to:
->**NAME="sdc1"** MAJ:MIN="8:33" RM="0" SIZE="4G" RO="0" TYPE="part" MOUNTPOINTS=**"/datadrive"**
+>**NAME="sdc1"** MAJ:MIN="8:33" RM="0" **SIZE="4G"** RO="0" TYPE="part" MOUNTPOINTS=**"/datadrive"**
 
 ### 3.73 Check that /mnt/share1 on the VM is mounted to Azure Files
 The Azure File Share should have been mounted
@@ -248,12 +250,9 @@ ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls /mnt
 ### 3.73 Copy the example 'filedoc.txt' to the Azure Files share
 In this step you will copy a file to the Azure Storage fileshare using AzCli and a temporary SAS token
 
-Set a **60 minute expiry** for an Azure Files SAS token
+Create a new SAS token with a **60 minute expiry** for Azure Files
 ```sh
 end=`date -u -d "60 minutes" '+%Y-%m-%dT%H:%MZ'`
-```
-Create a new SAS token
-```sh
 sas=`az storage share generate-sas -n $sharename --account-name $storageaccount --https-only --permissions dlrw --expiry $end -o tsv`
 ```
 Upload the **filedoc.txt** in the files folder to the new file share
@@ -294,7 +293,7 @@ Note the **Azure Managed Disk** on **/datadrive** should be empty:
 
 >total 0
 
-Now login to **AZCOPY** using the **VM's managed identity** preconfigured by Terraform, and copy the blob from the container to the /datadrive disk. 
+Now login to **AZCOPY** (deployed via Ansible earlier) using the **VM's managed identity** preconfigured by Terraform, and copy the blob from the container to the /datadrive disk. 
 
 >**adminuser@VM3~$  sudo /opt/azcopy/azcopy login --identity**
 
@@ -317,12 +316,15 @@ Final Job Status: Completed
 
 >**adminuser@VM3~$  ls -l /datadrive**
 
-The blob should now have been downloaded to the disk on /datadrive
+The blob should now have been downloaded to the disk on /datadrive and you can logoff to compmlete the lab.
+
+>**adminuser@VM3~$ logout**
+
 ## Part 3 Cleanup
 Once you have finished, **remember to save costs by destroying the infrastruture**
 
 
 ```sh
-rm hosts connectionscript.sh
+rm hosts connectionscript.sh terraform.tfvars
 terraform destroy -auto-approve
 ```
