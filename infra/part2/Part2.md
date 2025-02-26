@@ -17,7 +17,7 @@ Please also remember to see the prerequisites in the **[README](../../README.md)
 - Skill 7: Trigger an alert by resizing the virtual machine.
 - Skill 8: Configure an alert processing rule.
 
-**Note:** _While it is good practice to include monitoring capability in deployments, it's often better to monitor at using a baseline. We will explore monitoring baselines in a later part to see how you can then monitor your resources at scale but we will include it in the terraform configuration as per the Lab scenario provided._
+**Note:** _While it is good practice to include monitoring capability in deployments, it's often better to monitor at scale using a baseline. We will explore monitoring baselines in a later part to see how you can then monitor your resources at scale but we will include it in the terraform configuration as per the lab scenario._
 
 **_A note on the code snippets used in this walkthrough_**
 
@@ -167,9 +167,9 @@ echo $vm # Show the IP Address to paste into your browser
 ![RSG](../../images/RG2.png)
 
 ### 2.7 Trigger an alert by resizing the virtual machine
-You should have received an emall notifying you that your are in the Action Group and maybe some initial alerts. 
+You should have received an emall notifying you that you are in the Action Group "Cloud Ops" or similar, and maybe some initial alerts are waiting for you in Azure Monitor. 
 
-By resizing the VM the activity log will trigger new alerts. Resize the virtual machine.
+By resizing the VM manually, the activity log will trigger new alerts. Resize the virtual machine follwoing the below commands.
 
 ```sh
 # Step 1: Deallocate the VM
