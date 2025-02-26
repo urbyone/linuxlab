@@ -98,6 +98,8 @@ chmod 600 ~/.ssh/${vmname}_key
 ### 3.4 Deploy the Azure VM and its dependencies
 Deploy the Virtual Machine and setup the SSH connection. A virtual network and NSG will be used to isolate inbound traffic from the internet, allowing your client's IP address for **port 22**. 
 
+![nsg](../../images/nsg.png)
+
 **In real-world scenarios, inbound traffic would not usually be permitted directy to the web server, but more on that in later parts**
 
 **It's Terraform Workflow Time!**
@@ -122,11 +124,17 @@ terraform validate
 ```sh
 terraform plan
 ```
+ The plan should indicate 30 resources to be deployed to your **Resource Group**
+ _**Plan: 30 to add, 0 to change, 0 to destroy**_
+
  Now run the apply, remembering to type **yes** if you do not use the **-auto-approve** flag
 ```sh
 terraform apply
 ```
-Wait for the deployment to complete successfully.
+Wait for the deployment to complete successfully:
+
+_**Apply complete! Resources: 30 added, 0 changed, 0 destroyed.**_
+
 Then we will retrieve some values from the **terraform outputs** that we will need to connect the server to the **Azure Storage** account
 
 ```sh
@@ -245,9 +253,9 @@ Should return something similar to:
 ### 3.7.2 Check that /mnt/share1 on the VM is mounted to Azure Files
 The Azure File Share should have been mounted
 ```sh
-ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls /mnt
+ssh -i ~/.ssh/${vmname}_key adminuser@$vm ls /mnt | grep 'share1'
 ```
->share1
+>**share1**
 
 ### 3.7.3 Copy the example 'filedoc.txt' to the Azure Files share
 In this step you will copy a file to the Azure Storage fileshare using AzCli and a temporary SAS token
@@ -328,6 +336,6 @@ Once you have finished, **remember to save costs by destroying the infrastruture
 
 
 ```sh
-rm hosts connectionscript.sh terraform.tfvars
 terraform destroy -auto-approve
+rm hosts connectionscript.sh terraform.tfvars
 ```
