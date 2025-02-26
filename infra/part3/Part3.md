@@ -271,7 +271,7 @@ You should now be able to Create/Read/Write/Delete any file on the Azure File Sh
 filename="filedoc.txt"
 ssh -i ~/.ssh/${vmname}_key adminuser@$vm cat /mnt/${sharename}/${filename}
 ```
-### 3.8 Copy a file from Azure Blob storage to the virtual machine data disk
+### 3.8 Copy a file to the Azure Blob container
 
 Upload the **../files/blobimage.png** to the container
 ```sh
