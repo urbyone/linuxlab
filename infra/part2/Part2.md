@@ -227,6 +227,6 @@ Once you have finished, **remember to save costs by destroying the infrastruture
 
 
 ```sh
-rm hosts
 terraform destroy -auto-approve
+rm hosts terraform.tfvars
 ```
