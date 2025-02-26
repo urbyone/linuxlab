@@ -316,7 +316,7 @@ Final Job Status: Completed
 
 >**adminuser@VM3~$  ls -l /datadrive**
 
-The blob should now have been downloaded to the disk on /datadrive and you can logoff to compmlete the lab.
+The blob should now have been downloaded to the disk on /datadrive and you can logoff to complete the lab.
 
 >**adminuser@VM3~$ logout**
 
