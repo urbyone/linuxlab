@@ -337,5 +337,5 @@ Once you have finished, **remember to save costs by destroying the infrastruture
 
 ```sh
 terraform destroy -auto-approve
-rm hosts connectionscript.sh terraform.tfvars
+rm hosts connectionscript.sh
 ```

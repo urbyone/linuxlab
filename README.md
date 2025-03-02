@@ -70,3 +70,21 @@ We include the requirements from the previous 2 parts but now also explore how t
 
 ![Part3](./images/lab03.png)
 ### **[Go to Part 3 >>](./infra/part3/Part3.md)**
+
+### Objectives for Part 4
+
+In part 4, you are asked to evaluate how to backup Azure virtual machines. Backup will protect the virtual machines from accidental or malicious data loss.
+
+Instead of configuring backups in the Portal per virtual machine, you may be deploying many machines into a backend pool. 
+
+The _Cloud Governance_ function want to make sure that all Production VMs are backed up **automatically** rather than relying on manual backup routines.
+
+You also are asked to explore creating governance policies in separate modules to the workload. In this part you will:
+
+- Use **Terraform** to create one or **more** virtual machines instances
+- Deploy a **Terraform Module** for the backup requirements
+- Deploy a **Recovery Services Vault** and a **Backup Policy** for the VMs
+- Deploy an **Azure Policy Assignment** to deploy the backups for all VMs,**tagged** as _**'env : Production'**_
+
+![Part4](./images/lab04.png)
+### **[Go to Part 4 >>](./infra/part4/Part4.md)**
