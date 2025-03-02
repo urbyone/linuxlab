@@ -31,10 +31,16 @@ cd ./infra/part4
 ### 4.1 Set local variables
 These local variables will be passed to the terraform configuration. 
 
+**Replace the email address** to where the alerts will be sent
+
+```sh
+emailaddress="youremail@domain.com"
+```
+
 ```sh
 region="eastus"
 rsgname="RG4"
-vmname="VM" # Used as a prefix for multiple insatance 1-n
+vmname="VM" # VM Prefix
 vmSKU="Standard_DS1_v2"
 client_ip=$(curl -s http://api.ipify.org)
 my_ip_cidr="${client_ip}/32"
@@ -53,8 +59,8 @@ tfvarsFilePath=./terraform.tfvars
   echo "my_ip_cidr = \"$my_ip_cidr\""
   echo "email = \"$emailaddress\""
 } > $tfvarsFilePath
-
 ```
+
 ### 4.2 Deploy the Azure VM(s) and its dependencies
 Deploy the Virtual Machines 
 

@@ -19,7 +19,7 @@ data "azurerm_subscription" "current" {}
 
 resource "azurerm_resource_group" "rsg1" {
   location = var.region
-  name     = "${var.rsgname}"
+  name     = var.rsgname
 }
 
 resource "azurerm_ssh_public_key" "sshkey1" {

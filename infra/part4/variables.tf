@@ -34,11 +34,6 @@ variable "email" {
   type        = string
 }
 
-variable "userid" {
-  description = "objectid of the user signed in on Az CLI used for RBAC"
-  type        = string
-}
-
 variable "vm_tags" {
   description = "Tags to be assigned to the Azure VM"
   type        = map(string)
