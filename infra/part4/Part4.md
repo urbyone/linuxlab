@@ -90,6 +90,8 @@ terraform validate
 ```sh
 terraform plan
 ```
+Ensure your plan contains a supported VM image for Auto Backup. See [here](https://learn.microsoft.com/en-gb/azure/backup/backup-azure-policy-supported-skus) for more information
+
 **You can deploy one or more instances of the VM and the Terraform configuration will increment accordingly.**
 
 **_Please ensure you clean up unused resources at the end of the lab!_**
