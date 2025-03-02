@@ -46,9 +46,9 @@ variable "vm_tags" {
 variable "os" {
   type = map(string)
   default = {
-    offer     = "ubuntu-24_04-lts"
-    publisher = "canonical"
-    sku       = "server"
+    offer     = "CentOS-LVM"
+    publisher = "OpenLogic"
+    sku       = "7-lvm-gen2"
     version   = "latest"
   }
 }
