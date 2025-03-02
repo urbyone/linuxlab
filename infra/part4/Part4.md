@@ -126,7 +126,9 @@ You can also remedidate any non-compliant machines that were deployed before the
 
 ![POL1](../../images/newpol.png)
 
-You can view the policy paramaters set by the deploymemt.
+You can view the policy parameters set by the deploymemt.
+
+![POL](../../images/polparams.png)
 
 ![POL2](../../images/policy_settings.png)
 ## Part 4 Cleanup
