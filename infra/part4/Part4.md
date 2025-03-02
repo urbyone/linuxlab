@@ -122,7 +122,7 @@ az vm list --resource-group $rsgname --query [].name -o tsv
 ### 4.3 Review the Azure Policy
 Note there will now be an **Azure Policy** assigned on the Resource Group scope which will enforce backups on any newly created Virtual Machines. 
 
-You can also remedidate any non-compliant machines that were deployed before the polict took effect.
+You can also remedidate any non-compliant machines that were deployed before the policy took effect. The policy assignment requires a managed identity and some RBAC roles.
 
 ![POL1](../../images/newpol.png)
 

@@ -59,3 +59,14 @@ resource "azurerm_resource_group_policy_assignment" "pol-backups1" {
   )
   depends_on = [azurerm_backup_policy_vm.rsvpol]
 }
+
+resource "azurerm_role_assignment" "pol-rbac-1" {
+  principal_id = azurerm_resource_group_policy_assignment.pol-backups1.identity[0].principal_id
+  scope = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}"
+  role_definition_name = "Backup Contributor"
+}
+resource "azurerm_role_assignment" "pol-rbac-2" {
+  principal_id = azurerm_resource_group_policy_assignment.pol-backups1.identity[0].principal_id
+  scope = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rsgname}"
+  role_definition_name = "Virtual Machine Contributor"
+}
