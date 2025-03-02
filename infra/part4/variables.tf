@@ -46,7 +46,7 @@ variable "vm_tags" {
 variable "os" {
   type = map(string)
   default = {
-    offer     = "ubuntu-20_04-lts"
+    offer     = "ubuntu-24_04-lts"
     publisher = "canonical"
     sku       = "server"
     version   = "latest"
