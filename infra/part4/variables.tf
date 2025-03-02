@@ -1,4 +1,22 @@
 # variables.tf
+variable "vm_tags" {
+  description = "Tags to be assigned to the Azure VM"
+  type        = map(string)
+  default = {
+    env     = "Production"
+    Project = "The Linux Lab"
+  }
+}
+
+variable "os" {
+  type = map(string)
+  default = {
+    offer     = "CentOS-LVM"
+    publisher = "OpenLogic"
+    sku       = "7-lvm-gen2"
+    version   = "latest"
+  }
+}
 variable "instances" {
   type        = number
   description = "*** WARNING - DEPLOYING MORE INSTANCES WILL LEAD TO HIGHER COSTS! Ensure you are in control of your subscription costs and know how to destroy resources before proceeding! ***"
@@ -32,23 +50,4 @@ variable "vmSKU" {
 variable "email" {
   description = "emal address for action group"
   type        = string
-}
-
-variable "vm_tags" {
-  description = "Tags to be assigned to the Azure VM"
-  type        = map(string)
-  default = {
-    env     = "Production"
-    Project = "The Linux Lab"
-  }
-}
-
-variable "os" {
-  type = map(string)
-  default = {
-    offer     = "CentOS-LVM"
-    publisher = "OpenLogic"
-    sku       = "7-lvm-gen2"
-    version   = "latest"
-  }
 }
