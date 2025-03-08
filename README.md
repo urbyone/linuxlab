@@ -88,3 +88,10 @@ You also are asked to explore creating governance policies in separate modules t
 
 ![Part4](./images/lab04.png)
 ### **[Go to Part 4 >>](./infra/part4/Part4.md)**
+
+### Objectives for Part 5
+
+Part 5 offloads the deployment to a CI/CD pipeline using a sample GitHub actions yml workflow.
+
+![Part5](./images/diagram.jpg)
+### **[Go to Part 5 >>](./infra/part5/Part5.md)**
