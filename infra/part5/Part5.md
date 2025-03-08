@@ -1,4 +1,4 @@
-# Part 5
+# Part 5 - CI/CD
 
 Part 5 of this project is to put all the previous parts together into a **CI/CD pipeline.**
 
@@ -30,7 +30,6 @@ cd linuxlab
 ```
 
 #### Create a New Private Repo in GitHub
-Create a New **Private Repository**
 
 Go to GitHub.com and create a new private repository under your account or organization.
 
