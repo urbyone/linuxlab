@@ -155,7 +155,7 @@ az storage container create --name "tfstate" --account-name $accountName
   }
 }
 
-**NOTE: Storing this information in your private repo might be ok for lab scenarios but be midful of sharing sensitive information / IDs in version control since usually this would not be recommended in production scenarios.**
+**NOTE: Storing this information in your private repo might be ok for lab scenarios but be mindful of sharing sensitive information / IDs in version control since usually this would not be recommended in production scenarios.**
 
 **Update and save your [variables.tf](./variables.tf)**
 Speciically make sure to update your IP address, Email Address, preferred deployment options
@@ -173,7 +173,7 @@ git push -u origin main
 
 ```
 
-Check your Deployment was successful in Github Actions an dyou should be able to see your infrastructure coniguration in the resource group you specified
+Check your Deployment was successful in Github Actions and you should be able to see your infrastructure configuration in the resource group you specified
 
 ![deploy](../../images/job.png)
 
