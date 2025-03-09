@@ -3,7 +3,9 @@ name: Deploy My Linux VMs Using Terraform
 on:
   push:
     branches:
-      - main    
+      - main
+    paths:
+      - "infra/part5/**"     
   workflow_dispatch:
 
 jobs:
