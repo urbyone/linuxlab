@@ -199,6 +199,16 @@ git commit -m "DeployMyLinuxLab"
 git push -u origin main
 
 ```
+The pipeline will:
+- **Checkout your repo**
+- **Login to Azure using the Service Principal secret**
+- **Install Terraform**
+- **Get the SSH key pair for use in the deployments**
+- **Create a backend.tf file using the TF_BACKEND_CONFIG secret**
+- **Run the Terraform workflows using the backend remote state**
+- **Create a VM shel script to configure the data disk and file share**
+- **Create an Ansible hosts/inventory file**
+- **Deploy the ansible.yml file to configure the deployed servers in the inventory file**
 
 Check your Deployment was successful in Github Actions and you should be able to see your infrastructure configuration in the resource group you specified
 
