@@ -206,7 +206,7 @@ The pipeline will:
 - **Get the SSH key pair for use in the deployments**
 - **Create a backend.tf file using the TF_BACKEND_CONFIG secret**
 - **Run the Terraform workflows using the backend remote state**
-- **Create a VM shel script to configure the data disk and file share**
+- **Create a bash shell script to configure the data disk and file share**
 - **Create an Ansible hosts/inventory file**
 - **Deploy the ansible.yml file to configure the deployed servers in the inventory file**
 
