@@ -7,7 +7,7 @@ variable "ssh_key" {
 variable "my_ip_cidr" {
   description = "client IP(s) for SSH on Security Group Rule in CIDR notation"
   type        = string
-  default     = "xx.xx.xx.xx/32"
+  default     = "*"
 
 }
 variable "rsgname" {

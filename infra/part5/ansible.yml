@@ -1,0 +1,38 @@
+---
+- hosts: web
+  become: yes
+  tasks:
+    - name: Update the apt cache
+      apt:
+        update_cache: yes
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+    - name: Install cifs-utils
+      apt:
+        name: cifs-utils
+        state: latest
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+    - name: Copy setup script to remote server
+      ansible.builtin.copy:
+        src: setupscript.sh
+        dest: /tmp/setupscript.sh
+        mode: '0755'
+    - name: Run Setup Script
+      command: sudo sh /tmp/setupscript.sh
+    - name: Copy connection script to remote server
+      ansible.builtin.copy:
+        src: connectionscript.sh
+        dest: /tmp/connectionscript.sh
+        mode: '0755'
+    - name: Run File Share Script
+      command: sudo sh /tmp/connectionscript.sh
+    

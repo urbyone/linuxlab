@@ -1,22 +1,29 @@
-# Part 5 - CI/CD
+# Part 5 - Terraform, Ansible, GitHub CI/CD
 
 Part 5 of this project is to put all the previous parts together into a **CI/CD pipeline.**
 
-The aim here is to make changes to the infrastructure code, push to your repository and have a GitHub Actions workflow implement the changes automatically.
-
-![diagram](../../images/diagram.jpg)
+The aim here is to make changes to the infrastructure code, push to your repository and have a simple **GitHub Actions** workflow implement the changes automatically.
 
 The previous parts were all based on the administration of Linux virtual machines following the scenario based guidance from the Microsoft Learn **[Linux VM Guided Project](https://learn.microsoft.com/en-gb/training/modules/guided-project-deploy-administer-linux-virtual-machines-azure/)** 
 
 In this part we automate the deployment using a pipeline using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions)
+
+**Terraform will deploy the infrastructure to Azure**
+
+**Ansible will SSH to the VM(s) and configure the deployed infrastructure as per the specifications in the previous labs**
+
+# Pipeline Diagram
+![diagram](../../images/diagram.png)
+
+
 ### Components
 
 For this you will need the following if not already available:
 
-- A GitHub Account and a Private Repository
+- A GitHub Account and a private repository created
 - Azure CLI Installed and configured
-- Azure Subscription
-- Service Principal for RBAC
+- An Azure Subscription with Owner RBAC activated
+- Service Principal for GitHub access
 - An Azure Storage Account and Container (This is to store the Terraform state file)
 
 # Prerequisites
@@ -58,6 +65,26 @@ If this is not listed, create a **subscriptionId** variable from your az context
 ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
 ```
+#### Configure Azure Storage for the Terraform remote state
+Create a resource group for the storage account if not already configured.
+```sh
+region="uksouth"
+mytfRSG="MyTerraformState"
+az group create -n $mytfRSG -l $region --tags Description="Terraform State File" Service="GitHub Actions Linux Labs" URL="https://github.com/urbyone/linuxlab"
+```
+
+##### Create an Azure Blob Container for state files
+###### Generate a random azure storage account name (change if needed as accounts need to be unique)
+
+```sh
+accountName=$(head /dev/urandom | tr -dc a-z0-9 | head -c 15)
+echo $accountName
+```
+
+```sh
+az storage account create --resource-group $mytfRSG --name $accountName --sku Standard_LRS --encryption-services blob
+az storage container create --name "tfstate" --account-name $accountName
+```
 
 #### Create an Azure Service Principal
 This SP will be used for **Github CI/CD Deployments via Actions**
@@ -66,9 +93,9 @@ appName="myTestGitHubActions"
 az ad sp create-for-rbac --name $appName --role reader --scopes /subscriptions/${ARM_SUBSCRIPTION_ID} --json-auth
 ```
 
-**Copy the output from Azure needed below which will be needed for GitHub Secrets.**
+**Copy the output from the above step this will be for the GitHub Azure Credentials.**
 >{
-  "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-d7388608bd0c",
+  "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "clientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "subscriptionId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -88,87 +115,87 @@ Use the **appID** of the principal created above to create the identity
 az role assignment create --assignee <appID> --role Contributor --scope /subscriptions/${ARM_SUBSCRIPTION_ID}
 ```
 
-#### Create your GitHub Actions Secrets
+### Create GitHub Secrets
 From your Github repo, create the following secrets
 
 ![gh-settings](../../images/settings.png)
 
-##### Secret 1 : Azure Credentials
-Take the appID details you created above and paste the json into a secret called **AZURE_CREDENTIALS** in GitHub Actions. This will be the service principal created earlier to run the deployments
+#### Secret 1 : Azure Credentials
+Take the service principal details you created above and paste the json into a secret called **"AZURE_CREDENTIALS"** in GitHub Actions. This will be the service principal to run the deployment.
 
 https://github.com/yourusername/yourreponame/settings/secrets/actions
 
 ![GH-SPN](../../images/gh-creds.png)
 
 
-##### Secret 2: SSH Public Key
-Generate a key so the public key can be stored as a secret for you to use in Terraform to assign to the VM(s)
+#### Secret 2: SSH Public Key
+Generate an SSH key pair. 
+Store the public key as a secret for you to use in Terraform to assign to the VM(s) adminuser as part of the Terraform process
 
 ```sh
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/mysshkey -C "githubactions"
-ssh_key=$(cat ~/.ssh/mysshkey.pub)
-echo $ssh_key
+ssh_public_key=$(cat ~/.ssh/mysshkey.pub)
+echo $ssh_public_key
 ```
-Create a secret called SSH_KEY in Github Actions with the **public key** contents
+Create a secret called **"SSH_PUBLIC_KEY"** in Github Actions with the **public key** contents
 
-![GH-SSH](../../images/gh-ssh.png)
+![GH-pub](../../images/gh-ssh-pub.png)
 
-You should now have 2 secrets stored to use in future deployments.
+#### Secret 3: SSH Private Key
+Create a secret called **"SSH_PRIVATE_KEY"** in Github Actions with the **private key** contents. 
+This will be for the **Ansible** SSH connection after the deployment.
+
+Always **protect** your private keys.
+
+```sh
+ssh_private_key=$(cat ~/.ssh/mysshkey)
+echo $ssh_private_key
+```
+![GH-prv](../../images/gh-ssh-prv.png)
+
+#### Secret 4: Terraform backend details
+Create a secret called **"TF_BACKEND_CONFIG"** to contain your backend settings for the Terraform remote state file.
+
+You will need to replace the details with your resource group, storage account, tenant and subsctiption information. 
+
+Save this as json format like below and the backend configuration will be pulled by the pipeline.
+
+```
+{
+  "resource_group_name": "your-resource-group",
+  "storage_account_name": "your-storage-account-name ",
+  "container_name": "your-container-name",
+  "key": "your-blob-name.tfstate",
+  "subscription_id": "your-subscription-id"
+  "tenant_id": "your-tenant-id"
+}
+```
+
+![GH-be](../../images/gh-backend.png)
+
+You should now have **four** secrets stored to use in future deployments.
+
+- **AZURE_CREDENTIALS**
+- **SSH_PUBLIC_KEY**
+- **SSH_PRIVATE_KEY**
+- **TF_BACKEND_CONFIG**
 
 ![GH](../../images/gh-secret.png)
-#### Resource Group for the Terraform remote state file
-Create a resource group for the storage account if not already configured.
-```sh
-region="uksouth"
-mytfRSG="MyTerraformState"
-az group create -n $mytfRSG -l $region --tags Description="Terraform State File" Service="GitHub Actions Linux Labs" URL="https://github.com/urbyone/linuxlab"
-```
-
-##### Create an Azure Blob Container for Terraform State file
-###### Generate a random azure storage account name (change if needed as accounts need to be unique)
-
-```sh
-accountName=$(head /dev/urandom | tr -dc a-z0-9 | head -c 15)
-echo $accountName
-```
-
-```sh
-az storage account create --resource-group $mytfRSG --name $accountName --sku Standard_LRS --encryption-services blob
-az storage container create --name "tfstate" --account-name $accountName
-```
 
 
-#### Prepare the Terraform Configuration
-**CD to the infra/part5** working folder with the terraform configuration files
+# Deployment
 
-
-**Update and save the [backend.tf](./backend.tf) with your own values.**
-
->terraform {
-  backend "azurerm" {
-    resource_group_name  = "MyTerraformState"
-    storage_account_name = **"your_storage_account_name"**
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-    tenant_id            = **"your_tenant_id"**
-    subscription_id      = **"your_subscription_id"**
-  }
-}
-
-**NOTE: Storing this information in your private repo might be ok for lab scenarios but be mindful of sharing sensitive information / IDs in version control since usually this would not be recommended in production scenarios.**
 
 **Update and save your [variables.tf](./variables.tf)**
-Speciically make sure to update your IP address, Email Address, preferred deployment options
 
+Update the variables file in your repo. Speciically make sure to update your Email Address, preferred deployment options where required.
 
-
-# Pipeline Deployment
-Once your environment is setup, pushing your Terraform code to your Github repo will start the pipeline.
+Once your environment is setup, pushing your code to your Github repo will start the pipeline due to the trigger on the pipeline.yml.
 
 
 ```sh
 git add .
-git commit -m "DeployMyCode"
+git commit -m "DeployMyLinuxLab"
 git push -u origin main
 
 ```

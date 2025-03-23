@@ -1,0 +1,12 @@
+sudo mkdir /mnt/insertsharenamehere
+if [ ! -d "/etc/smbcredentials" ]; then
+sudo mkdir /etc/smbcredentials
+fi
+if [ ! -f "/etc/smbcredentials/insertstorageaccountnamehere.cred" ]; then
+    sudo bash -c 'echo "username=insertstorageaccountnamehere" >> /etc/smbcredentials/insertstorageaccountnamehere.cred'
+    sudo bash -c 'echo "password=insertstoragekeyhere" >> /etc/smbcredentials/insertstorageaccountnamehere.cred'
+fi
+sudo chmod 600 /etc/smbcredentials/insertstorageaccountnamehere.cred
+
+sudo bash -c 'echo "//insertstorageaccountnamehere.file.core.windows.net/insertsharenamehere /mnt/insertsharenamehere cifs nofail,credentials=/etc/smbcredentials/insertstorageaccountnamehere.cred,dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30" >> /etc/fstab'
+sudo mount -t cifs //insertstorageaccountnamehere.file.core.windows.net/insertsharenamehere /mnt/insertsharenamehere -o credentials=/etc/smbcredentials/insertstorageaccountnamehere.cred,dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30

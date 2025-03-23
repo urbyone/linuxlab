@@ -1,0 +1,10 @@
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rsg_value"
+    storage_account_name = "sa_value"
+    container_name       = "cont_value"
+    key                  = "key_value"
+    tenant_id            = "ten_value"
+    subscription_id      = "sub_value"
+  }
+}
