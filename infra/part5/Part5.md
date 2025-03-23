@@ -188,7 +188,7 @@ You should now have **four** secrets stored to use in future deployments.
 
 **Update and save your [variables.tf](./variables.tf)** in order to trigger the deployment.
 
-Update the variables.tf before commitng, speciically you can update your Email Address, VM name, resouce group name and other preferred deployment options in the variables.tf.
+Update the variables.tf before commiting, specifically you can update your Email Address, VM name, resouce group name and other preferred deployment options in the variables.tf.
 
 Once your environment is setup, pushing your code to your Github repo will start the pipeline due to the trigger on the **pipeline.yml.**
 
