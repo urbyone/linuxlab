@@ -221,5 +221,5 @@ From the infra/part5 we have been working in, you can initialise Terraform and d
 
 ```sh
 terraform init
-terraform destroy -var="ssh_key=${ssh_key}" -auto-approve
+terraform destroy -var="ssh_key=${ssh_public_key}" -auto-approve
 ```
