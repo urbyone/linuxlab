@@ -163,10 +163,10 @@ Save this as json format like below and the backend configuration will be pulled
 ```
 {
   "resource_group_name": "your-resource-group",
-  "storage_account_name": "your-storage-account-name ",
+  "storage_account_name": "your-storage-account-name",
   "container_name": "your-container-name",
   "key": "your-blob-name.tfstate",
-  "subscription_id": "your-subscription-id"
+  "subscription_id": "your-subscription-id",
   "tenant_id": "your-tenant-id"
 }
 ```

@@ -1,6 +1,10 @@
 name: Deploy My Linux VMs Using Terraform and Ansible
 on:
-
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/part5/**"
   workflow_dispatch:
 
 jobs:
