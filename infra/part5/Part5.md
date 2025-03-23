@@ -156,7 +156,7 @@ echo $ssh_private_key
 #### Secret 4: Terraform backend details
 Create a secret called **"TF_BACKEND_CONFIG"** to contain your backend settings for the Terraform remote state file.
 
-You will need to replace the details with your resource group, storage account, tenant and subsctiption information. 
+You will need to replace the details with your resource group, storage account, tenant and subscription information. 
 
 Save this as json format like below and the backend configuration will be pulled by the pipeline.
 
