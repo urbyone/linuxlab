@@ -109,10 +109,10 @@ az ad sp create-for-rbac --name $appName --role reader --scopes /subscriptions/$
 
 
 #### Grant the Service Principal access to your Subscription
-Use the **appID** of the principal created above to create the role assignment
+Use the *ClientId** of the principal created above to create the role assignment
 
 ```sh
-az role assignment create --assignee <appID> --role Contributor --scope /subscriptions/${ARM_SUBSCRIPTION_ID}
+az role assignment create --assignee <clientId> --role Contributor --scope /subscriptions/${ARM_SUBSCRIPTION_ID}
 ```
 
 ### Create GitHub Secrets
