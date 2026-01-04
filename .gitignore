@@ -29,7 +29,8 @@ crash.*.log
 # Exclude all .tfvars files, which are likely to contain sensitive data
 .tfvars
 .tfvars.json
-.backend.hcl
+**.backend.hcl
+**/backend.tf
 
 # Ignore override files as they are usually used to override resources locally
 override.tf
