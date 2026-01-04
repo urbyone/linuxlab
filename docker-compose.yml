@@ -1,0 +1,27 @@
+services:
+  # Main development container with Azure CLI and Terraform
+  azure-dev:
+    image: ansibledev:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ansiblecontainer
+    volumes:
+      # Mount your local directory to persist work
+      - .:/workspace
+      # Mount Azure credentials from host machine for automatic login
+      - ${HOME}/.azure:/home/admin/.azure
+      # Mount Terraform state and config
+      - terraform-config:/home/admin/.terraform.d
+    #env_file:
+      # Load environment variables from .env file (not committed to git)
+      # - .env.cuaz
+    environment:
+      - TERM=xterm-256color
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+
+volumes:
+  # Persistent volume to keep Terraform config
+  terraform-config:

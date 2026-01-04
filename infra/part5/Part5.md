@@ -115,12 +115,12 @@ Use the **ClientId** of the principal created above to create the role assignmen
 az role assignment create --assignee <clientId> --role Contributor --scope /subscriptions/${ARM_SUBSCRIPTION_ID}
 ```
 
-### Create GitHub Secrets
+### Create GitHub Secrets and Variables
 From your Github repo, create the following secrets
 
 ![gh-settings](../../images/settings.png)
 
-#### Secret 1 : Azure Credentials
+#### Secret: Azure Credentials
 Take the service principal details you created above and paste the json into a secret called **"AZURE_CREDENTIALS"** in GitHub Actions. This will be the service principal to run the deployment.
 
 https://github.com/yourusername/yourreponame/settings/secrets/actions
@@ -128,9 +128,9 @@ https://github.com/yourusername/yourreponame/settings/secrets/actions
 ![GH-SPN](../../images/gh-creds.png)
 
 
-#### Secret 2: SSH Public Key
+#### Env: SSH Public Key
 Generate an SSH key pair. 
-Store the public key as a secret for you to use in Terraform to assign to the VM(s) adminuser as part of the Terraform process
+Store the public key as a variable for you to use in Terraform to assign to the VM(s) adminuser as part of the Terraform process
 
 ```sh
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/mysshkey -C "githubactions"
@@ -141,7 +141,7 @@ Create a secret called **"SSH_PUBLIC_KEY"** in Github Actions with the **public 
 
 ![GH-pub](../../images/gh-ssh-pub.png)
 
-#### Secret 3: SSH Private Key
+#### Secret: SSH Private Key
 Create a secret called **"SSH_PRIVATE_KEY"** in Github Actions with the **private key** contents. 
 This will be for the **Ansible** SSH connection after the deployment.
 
@@ -153,7 +153,7 @@ echo $ssh_private_key
 ```
 ![GH-prv](../../images/gh-ssh-prv.png)
 
-#### Secret 4: Terraform backend details
+#### Env: Terraform backend details
 Create a secret called **"TF_BACKEND_CONFIG"** to contain your backend settings for the Terraform remote state file.
 
 You will need to replace the details with your resource group, storage account, tenant and subscription information. 
