@@ -127,7 +127,7 @@ jobs:
             ssh-keyscan -H ${{ steps.terraform_output.outputs.vm_ip }} >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
-        run: ssh -v adminuser@${{ steps.terraform_output.outputs.vm_ip }} "echo Connection successful"
+        run: ssh -i ~/.ssh/id_rsa adminuser@${{ steps.terraform_output.outputs.vm_ip }} "echo Connection successful"
 
       - name: Install Ansible
         run: |
