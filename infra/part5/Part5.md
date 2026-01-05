@@ -162,8 +162,7 @@ This will be for the **Ansible** SSH connection after the deployment.
 Always **protect** your private keys.
 
 ```sh
-ssh_private_key=$(cat ~/.ssh/mysshkey)
-echo $ssh_private_key
+cat ~/.ssh/mysshkey
 ```
 ![GH-prv](../../images/gh-ssh-prv.png)
 
