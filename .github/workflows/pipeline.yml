@@ -115,7 +115,7 @@ jobs:
       - name: Get Private SSH Key for Ansible
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           cat ~/.ssh/id_rsa
 

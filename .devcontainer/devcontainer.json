@@ -28,7 +28,6 @@
         "ms-azuretools.vscode-azurefunctions",
         "ms-azuretools.vscode-azuretools",
         "hashicorp.terraform",
-        "ms-kubernetes-tools.vscode-kubernetes-tools",
         "ms-vscode.powershell",
         "GitLab.gitlab-workflow"
       ]
