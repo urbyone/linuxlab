@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TF_VAR_ssh_key: ${{ secrets.SSH_PUBLIC_KEY }}
+      TF_BACKEND_CONFIG: ${{ vars.TF_BACKEND_CONFIG }}
+      TF_VAR_ssh_key: ${{ vars.SSH_PUBLIC_KEY }}
       TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      TF_VAR_email: ${{ vars.EMAIL_ADDRESS }}
       ANSIBLE_HOST_KEY_CHECKING: "false"
       working: ./infra/part5
 
@@ -38,7 +40,7 @@ jobs:
       - name: Parse Backend Config
         id: backend_config
         run: |
-          echo '${{ secrets.TF_BACKEND_CONFIG }}' > backend_config.json
+          echo '${{ env.TF_BACKEND_CONFIG }}' > backend_config.json
           echo "RESOURCE_GROUP=$(jq -r .resource_group_name backend_config.json)" >> $GITHUB_OUTPUT
           echo "STORAGE_ACCOUNT=$(jq -r .storage_account_name backend_config.json)" >> $GITHUB_OUTPUT
           echo "CONTAINER=$(jq -r .container_name backend_config.json)" >> $GITHUB_OUTPUT
@@ -113,7 +115,7 @@ jobs:
       - name: Get Private SSH Key for Ansible
         run: |
           mkdir -p ~/.ssh
-          echo "${{ env.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           cat ~/.ssh/id_rsa
 
@@ -125,7 +127,7 @@ jobs:
             ssh-keyscan -H ${{ steps.terraform_output.outputs.vm_ip }} >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
-        run: ssh -v adminuser@${{ steps.terraform_output.outputs.vm_ip }} "echo Connection successful"
+        run: ssh -i ~/.ssh/id_rsa adminuser@${{ steps.terraform_output.outputs.vm_ip }} "echo Connection successful"
 
       - name: Install Ansible
         run: |

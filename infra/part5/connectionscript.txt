@@ -1,3 +1,6 @@
+# This is a placeholder script - DO NOT EDIT
+# The CI/CD pipeline will replace values with the outputs taken from the Terraform and will run as a bash script on the VM
+
 sudo mkdir /mnt/insertsharenamehere
 if [ ! -d "/etc/smbcredentials" ]; then
 sudo mkdir /etc/smbcredentials
