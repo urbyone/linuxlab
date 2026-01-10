@@ -6,7 +6,7 @@
 my_ip_cidr = "*"
 
 # Azure resource group name
-rsgname = "rg-linuxlabs"
+rsgname = "rg-linuxlabs1"
 
 # Azure region
 region = "uksouth"

@@ -35,7 +35,7 @@ For this you will need the following if not already available:
 If you are not opening in GitHub Codespaces:
 ```sh
 git clone https://github.com/urbyone/linuxlab
-cd linuxlab
+cd linuxlab/infra/part5
 ```
 If you do not create a forked repo, create a new private repository and change your remote.
 
@@ -198,7 +198,8 @@ You should now have **two** secrets and **three** variables stored to use in fut
 - **Env Var: TF_BACKEND_CONFIG**
 - **Env Var: EMAIL_ADDRESS**
 
-![GH](../../images/gh-secret.png)
+![GH](../../images/vars.png)
+![GH](../../images/secrets.png)
 
 # Deployment
 **Update and save your [variables.auto.tf](./variables.auto.tfvars)** in order to trigger the deployment.
@@ -238,6 +239,8 @@ You might need to create a backend config before you can initialise.
 
 ```sh
 cp backend.txt backend.tf #Then update your value for the state file
+```
+```sh
 terraform init
 terraform destroy -var="ssh_key=${ssh_public_key}" -auto-approve
 ```
